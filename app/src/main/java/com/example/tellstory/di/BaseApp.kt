@@ -1,4 +1,4 @@
-package com.example.tellstory
+package com.example.tellstory.di
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

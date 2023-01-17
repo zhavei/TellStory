@@ -1,4 +1,4 @@
-package com.example.tellstory
+package com.example.tellstory.coredata.remote
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
@@ -19,11 +19,8 @@ data class LoginResult(
 )
 
 data class RegisterResponse(
-    @field:SerializedName("error")
-    val error: Boolean,
-
-    @field:SerializedName("message")
-    val message: String
+    @field:SerializedName("error") val error: Boolean,
+    @field:SerializedName("message") val message: String
 )
 
 data class AddNewStoryResponse(
@@ -34,7 +31,7 @@ data class AddNewStoryResponse(
 data class GetAllStoriesResponse(
     @field:SerializedName("error") val error: Boolean,
     @field:SerializedName("message") val message: String,
-    @field:SerializedName("listStoryItems") val listStoryItems: List<ListStoryItems>
+    @field:SerializedName("listStory") val listStoryItems: List<ListStoryItems>
 )
 
 @Parcelize

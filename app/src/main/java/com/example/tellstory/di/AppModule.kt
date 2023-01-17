@@ -1,6 +1,9 @@
-package com.example.tellstory
+package com.example.tellstory.di
 
 import android.content.Context
+import com.example.tellstory.BuildConfig
+import com.example.tellstory.common.Preferences
+import com.example.tellstory.coredata.remote.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

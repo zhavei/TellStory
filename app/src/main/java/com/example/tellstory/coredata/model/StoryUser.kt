@@ -1,4 +1,4 @@
-package com.example.tellstory
+package com.example.tellstory.coredata.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName

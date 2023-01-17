@@ -1,4 +1,4 @@
-package com.example.tellstory
+package com.example.tellstory.coredata.remote
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
