@@ -1,6 +1,7 @@
 package com.example.tellstory.ui.auth
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -23,20 +24,16 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
+private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var apiService: ApiService
-
-    private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
-
     private lateinit var storyUser: StoryUser
-
     private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
-
     private val loginViewModel: LoginViewModel by viewModels<LoginViewModel> {
         ViewModelFactory(UserDataPreferences.getInstance(userDataStore))
     }
@@ -49,22 +46,28 @@ class LoginActivity : AppCompatActivity() {
             this.storyUser = user
         }
 
-        binding.apply {
-            btnLogin.setOnClickListener {
-                val email = etlogin.editText.toString().trim()
-                val pass = etlogin2.editText.toString().trim()
-                when {
-                    email.isEmpty() -> {
-                        etlogin.error = getString(R.string.empty_email)
-                    }
-                    pass.isEmpty() -> {
-                        etlogin2.error = getString(R.string.empty_password)
-                    }
-                    else -> {
-                        userLogin(email, pass)
-                        loginViewModel.userLogin()
+
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etlogin.toString().trim()
+            val pass = binding.etlogin2.toString().trim()
+            when {
+                email.isEmpty() -> {
+                    binding.etlogin.error = getString(R.string.empty_email)
+                }
+                pass.isEmpty() -> {
+                    binding.etlogin2.error = getString(R.string.empty_password)
+                }
+                else -> {
+                    userLogin(email, pass)
+                    loginViewModel.userLogin()
                     }
                 }
+            }
+
+        binding.apply {
+            btnToRegister.setOnClickListener {
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+                startActivity(intent)
             }
         }
 
@@ -72,6 +75,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun userLogin(email: String, pass: String) {
         val service = apiService.loginService(email, pass)
+        //val service = ApiConfig.getApiService(this).loginService(email, pass)
 
         service.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -91,9 +95,8 @@ class LoginActivity : AppCompatActivity() {
                         this@LoginActivity,
                         " login ${response.message()}",
                         Toast.LENGTH_SHORT
-                    )
-                        .show()
-                    Log.e(TAG, "onFailure: ${response.message()}")
+                    ).show()
+                    Log.e(TAG, response.message())
                 }
             }
 
