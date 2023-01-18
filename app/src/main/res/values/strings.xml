@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TellStory</string>
+    <string name="empty_email">Email Cannot Empty</string>
+    <string name="empty_password">Password Cannot Empty</string>
 </resources>

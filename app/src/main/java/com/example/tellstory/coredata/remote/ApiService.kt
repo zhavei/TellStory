@@ -9,7 +9,7 @@ interface ApiService {
 
     @FormUrlEncoded
     @POST("login")
-    fun login(
+    fun loginService(
         @Field("email") email: String,
         @Field("password") password: String
     ): Call<LoginResponse>
@@ -17,21 +17,21 @@ interface ApiService {
 
     @FormUrlEncoded
     @POST("register")
-    fun register(
+    fun registerService(
         @Field("name") name: String,
         @Field("email") email: String,
         @Field("password") password: String
     ): Call<RegisterResponse>
 
     @GET("stories")
-    fun getAllStories(
+    fun getAllStoriesService(
         @Header("Authorization") token: String,
     ): Call<GetAllStoriesResponse>
 
 
     @Multipart
     @POST("stories")
-    fun addNewStory(
+    fun addNewStoryService(
         @Header("Authorization") token: String,
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody

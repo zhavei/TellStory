@@ -6,12 +6,20 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class StoryUser(
-    @field:SerializedName("userId")
-    val userId: String,
+    @field:SerializedName("user_email")
+    val userEmail: String,
 
     @field:SerializedName("name")
     val userName: String,
 
     @field:SerializedName("token")
-    val userToken: String
+    val userToken: String,
+
+    @field:SerializedName("user_pass")
+    val userPass: String,
+
+    @field:SerializedName("is_login")
+    val isUserLogin: Boolean,
+
+
 ): Parcelable
