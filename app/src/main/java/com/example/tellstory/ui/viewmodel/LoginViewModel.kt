@@ -18,7 +18,7 @@ class LoginViewModel(private val preferences: UserDataPreferences) : ViewModel()
 
     fun userToken(user: StoryUser) {
         viewModelScope.launch {
-            preferences.saveUser(user)
+            preferences.userToken(user)
         }
     }
 

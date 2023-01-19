@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class StoryUser(
-    @field:SerializedName("user_email")
+    @field:SerializedName("email")
     val userEmail: String,
 
     @field:SerializedName("name")
@@ -15,7 +15,7 @@ data class StoryUser(
     @field:SerializedName("token")
     val userToken: String,
 
-    @field:SerializedName("user_pass")
+    @field:SerializedName("password")
     val userPass: String,
 
     @field:SerializedName("is_login")

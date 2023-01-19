@@ -15,25 +15,25 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/etlogin"
+            android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:text="@string/empty_email" />
+            android:text="duck@gmail.com" />
 
         <EditText
             android:layout_margin="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etlogin2"
-            android:text="@string/empty_password" />
+            android:id="@+id/etPass"
+            android:text="123456" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnLogin"
             android:layout_margin="12dp"
-            android:text="gaskan" />
+            android:text="login" />
 
         <Button
             android:layout_width="match_parent"

@@ -17,6 +17,7 @@ import com.example.tellstory.coredata.model.StoryUser
 import com.example.tellstory.coredata.remote.ApiService
 import com.example.tellstory.coredata.remote.LoginResponse
 import com.example.tellstory.databinding.ActivityLoginBinding
+import com.example.tellstory.ui.main.MainActivity
 import com.example.tellstory.ui.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
@@ -34,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
-    private val loginViewModel: LoginViewModel by viewModels<LoginViewModel> {
+    private val loginViewModel: LoginViewModel by viewModels {
         ViewModelFactory(UserDataPreferences.getInstance(userDataStore))
     }
 
@@ -48,14 +49,14 @@ class LoginActivity : AppCompatActivity() {
 
 
         binding.btnLogin.setOnClickListener {
-            val email = binding.etlogin.toString().trim()
-            val pass = binding.etlogin2.toString().trim()
+            val email = binding.etEmail.text.toString().trim()
+            val pass = binding.etPass.text.toString().trim()
             when {
                 email.isEmpty() -> {
-                    binding.etlogin.error = getString(R.string.empty_email)
+                    binding.etEmail.error = getString(R.string.empty_email)
                 }
                 pass.isEmpty() -> {
-                    binding.etlogin2.error = getString(R.string.empty_password)
+                    binding.etPass.error = getString(R.string.empty_password)
                 }
                 else -> {
                     userLogin(email, pass)
@@ -66,8 +67,9 @@ class LoginActivity : AppCompatActivity() {
 
         binding.apply {
             btnToRegister.setOnClickListener {
-                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
-                startActivity(intent)
+                Intent(this@LoginActivity, RegisterActivity::class.java).also {
+                    startActivity(it)
+                }
             }
         }
 
@@ -75,7 +77,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun userLogin(email: String, pass: String) {
         val service = apiService.loginService(email, pass)
-        //val service = ApiConfig.getApiService(this).loginService(email, pass)
 
         service.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -90,13 +91,19 @@ class LoginActivity : AppCompatActivity() {
                             false
                         )
                     )
-                } else {
+                    toMainActivity()
                     Toast.makeText(
                         this@LoginActivity,
                         " login ${response.message()}",
                         Toast.LENGTH_SHORT
                     ).show()
-                    Log.e(TAG, response.message())
+                } else {
+                    Log.d(TAG, "is success? =  ${response.message()}")
+                    Toast.makeText(
+                        this@LoginActivity,
+                        " login ${response.message()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
@@ -107,6 +114,12 @@ class LoginActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    private fun toMainActivity() {
+        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     companion object {

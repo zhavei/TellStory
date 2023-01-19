@@ -28,16 +28,18 @@ class AppModule {
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
         }
 
-        val netWorkClient = OkHttpClient.Builder()
-            .addInterceptor(
-                ChuckerInterceptor.Builder(context = context)
-                    .collector(ChuckerCollector(context))
-                    .maxContentLength(250000L)
-                    .redactHeaders(emptySet())
-                    .alwaysReadResponseBody(false)
-                    .build()
-            )
-            .build()
+         val netWorkClient = OkHttpClient.Builder()
+             .addInterceptor(
+                 ChuckerInterceptor.Builder(context = context)
+                     .collector(ChuckerCollector(context))
+                     .maxContentLength(250000L)
+                     .redactHeaders(emptySet())
+                     .alwaysReadResponseBody(false)
+                     .build()
+             )
+             .build()
+
+        //val netWorkClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
 
         val retrofit by lazy {
             Retrofit.Builder().baseUrl(BuildConfig.URL).client(netWorkClient)

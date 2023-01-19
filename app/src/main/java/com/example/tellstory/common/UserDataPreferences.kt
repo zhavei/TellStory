@@ -39,7 +39,7 @@ class UserDataPreferences private constructor(private val userDataStore: DataSto
         }
     }
 
-    suspend fun logOutUser(user: StoryUser) {
+    suspend fun logOutUser() {
         userDataStore.edit { logOutUser ->
             logOutUser[KEY_IS_LOGIN] = false
             logOutUser[KEY_USER_NAME] = ""

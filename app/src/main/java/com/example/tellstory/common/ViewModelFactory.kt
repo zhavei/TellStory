@@ -20,7 +20,7 @@ class ViewModelFactory (private val userDataPreferences: UserDataPreferences) : 
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> {
                 LoginViewModel(userDataPreferences) as T
             }
-            else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
+            else -> throw IllegalArgumentException("Unrecognized ViewModel class: " + modelClass.name)
         }
     }
 
