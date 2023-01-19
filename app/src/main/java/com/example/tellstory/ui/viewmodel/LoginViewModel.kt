@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.coredata.model.StoryUser
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 class LoginViewModel(private val preferences: UserDataPreferences) : ViewModel() {

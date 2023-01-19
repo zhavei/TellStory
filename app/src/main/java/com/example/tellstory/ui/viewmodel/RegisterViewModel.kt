@@ -1,8 +1,6 @@
 package com.example.tellstory.ui.viewmodel
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,13 +15,13 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Array.get
 import javax.inject.Inject
 
 
-class RegisterViewModel(private val preferences: UserDataPreferences) : ViewModel() {
-
-    @Inject
-    lateinit var apiService: ApiService
+class RegisterViewModel (
+    private val preferences: UserDataPreferences
+) : ViewModel() {
 
     fun saveNewAuth(user: StoryUser) {
         viewModelScope.launch {

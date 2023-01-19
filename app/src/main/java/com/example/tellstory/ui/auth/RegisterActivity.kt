@@ -12,7 +12,6 @@ import androidx.lifecycle.LiveData
 import com.example.tellstory.R
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.common.ViewModelFactory
-import com.example.tellstory.coredata.model.StoryUser
 import com.example.tellstory.coredata.remote.ApiService
 import com.example.tellstory.databinding.ActivityRegisterBinding
 import com.example.tellstory.ui.viewmodel.RegisterViewModel
@@ -32,7 +31,6 @@ class RegisterActivity : AppCompatActivity() {
     private val signUpViewModel: RegisterViewModel by viewModels {
         ViewModelFactory(UserDataPreferences.getInstance(userDataStore))
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
