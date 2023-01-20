@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -38,15 +39,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        mainViewModel.isUserLogin().observe(this, {
-            if (!it.isUserLogin) {
+        /* mainViewModel.isUserLogin().observe(this, {
+             if (!it.isUserLogin) {
+                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                 startActivity(intent)
+                 finish()
+             }
+         })*/
+
+        setupAction()
+    }
+
+    private fun setupAction() {
+        mainViewModel.isUserLogin().observe(this) { user ->
+            if (user.isUserLogin) {
+                Toast.makeText(this, "Hello ${user.userName}", Toast.LENGTH_SHORT).show()
+            } else {
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
             }
-        })
-
-
+        }
 
     }
 }
