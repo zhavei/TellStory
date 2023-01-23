@@ -18,6 +18,7 @@ import com.example.tellstory.coredata.remote.ApiService
 import com.example.tellstory.coredata.remote.ListStoryItems
 import com.example.tellstory.databinding.ActivityMainBinding
 import com.example.tellstory.ui.auth.LoginActivity
+import com.example.tellstory.ui.newstory.AddNewStoryActivity
 import com.example.tellstory.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -51,6 +52,17 @@ class MainActivity : AppCompatActivity() {
         }
         //endregion
         setupAction()
+
+        // region add new story
+        binding.apply {
+            fabMain.setOnClickListener {
+                val intent = Intent(this@MainActivity, AddNewStoryActivity::class.java)
+                startActivity(intent)
+                Log.d(TAG, "testing Fab")
+            }
+        }
+
+        //endregion
     }
 
     private fun setupAction() {
@@ -107,6 +119,7 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
 
     private fun toDetailActivity(name: ListStoryItems) {
         Toast.makeText(this, "this ${name.name} status", Toast.LENGTH_SHORT).show()
