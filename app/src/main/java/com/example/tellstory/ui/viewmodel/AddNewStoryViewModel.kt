@@ -1,6 +1,5 @@
 package com.example.tellstory.ui.viewmodel
 
-import android.provider.Telephony.Carriers.BEARER
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,19 +7,16 @@ import androidx.lifecycle.asLiveData
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.coredata.model.StoryUser
 import com.example.tellstory.coredata.remote.AddNewStoryResponse
-import com.example.tellstory.coredata.remote.ApiService
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.tellstory.coredata.remote.ApiConfig
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import javax.inject.Inject
 
-@HiltViewModel
-class AddNewStoryViewModel @Inject constructor(
+
+class AddNewStoryViewModel(
     private val preferences: UserDataPreferences,
-    private val apiService: ApiService
 ) : ViewModel() {
 
     fun getUser(): LiveData<StoryUser> {
@@ -35,7 +31,9 @@ class AddNewStoryViewModel @Inject constructor(
 
     fun postNewStory(file: MultipartBody.Part, description: RequestBody, token: String) {
         _loading.value = true
-        val requestService = apiService.addNewStoryService(BEARER + token, file, description)
+        val requestService =
+            ApiConfig.getApiService().addNewStoryService(BEARER + token, file, description)
+        /*val requestService = apiService.addNewStoryService(BEARER + token, file, description)*/
         requestService.enqueue(object : Callback<AddNewStoryResponse> {
             override fun onResponse(
                 call: Call<AddNewStoryResponse>,
