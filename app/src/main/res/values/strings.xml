@@ -2,4 +2,6 @@
     <string name="app_name">TellStory</string>
     <string name="empty_email">Email Cannot Empty</string>
     <string name="empty_password">Password Cannot Empty</string>
+    <string name="empty_desc">please Fill The Description</string>
+    <string name="take_your_picture">Please Take Your Image</string>
 </resources>
