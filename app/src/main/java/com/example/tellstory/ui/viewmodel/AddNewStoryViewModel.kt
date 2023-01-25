@@ -29,6 +29,10 @@ class AddNewStoryViewModel(
     private var _status = MutableLiveData<Boolean>()
     val status: LiveData<Boolean> get() = _status
 
+    private var _respones = MutableLiveData<String>()
+    val responses: LiveData<String> get() = _respones
+
+
     fun postNewStory(file: MultipartBody.Part, description: RequestBody, token: String) {
         _loading.value = true
         val requestService =
@@ -39,13 +43,14 @@ class AddNewStoryViewModel(
                 call: Call<AddNewStoryResponse>,
                 response: Response<AddNewStoryResponse>
             ) {
-                val body = response.body()
-                if (body != null) {
-                    if (response.isSuccessful && body.error) {
-                        _loading.value = false
-                        _status.value = true
+                if (response.isSuccessful) {
+                    _loading.value = false
+                    _status.value = true
+                    val body = response.body()
+                    if (body != null && body.error) {
+                        _respones.postValue(RESPONE_MESSAGE + body.message)
                     } else {
-                        _status.value = false
+                        _respones.postValue(RESPONE_MESSAGE + body?.message)
                     }
                 }
             }
@@ -59,6 +64,7 @@ class AddNewStoryViewModel(
 
     companion object {
         private val BEARER = "Bearer "
+        private val RESPONE_MESSAGE = "New "
     }
 
 }

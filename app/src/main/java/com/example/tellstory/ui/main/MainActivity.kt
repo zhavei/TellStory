@@ -11,6 +11,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.common.ViewModelFactory
 import com.example.tellstory.coredata.model.StoryUser
@@ -18,6 +19,7 @@ import com.example.tellstory.coredata.remote.ApiService
 import com.example.tellstory.coredata.remote.ListStoryItems
 import com.example.tellstory.databinding.ActivityMainBinding
 import com.example.tellstory.ui.auth.LoginActivity
+import com.example.tellstory.ui.detail.DetailsActivity
 import com.example.tellstory.ui.newstory.AddNewStoryActivity
 import com.example.tellstory.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -122,6 +124,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun toDetailActivity(name: ListStoryItems) {
+        Intent(this, DetailsActivity::class.java).also {
+            it.putExtra(DetailsActivity.DETAILS_EXTRA, name)
+            startActivity(it)
+        }
+
         Toast.makeText(this, "this ${name.name} status", Toast.LENGTH_SHORT).show()
     }
 

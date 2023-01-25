@@ -101,7 +101,7 @@ class AddNewStoryActivity : AppCompatActivity() {
 
     private fun postNewStory() {
         binding.apply {
-            val description = etDescription.text.toString().trim()
+            val description = etDescription.text
             when {
                 description.isEmpty() -> {
                     etDescription.error = getString(R.string.empty_desc)
@@ -116,7 +116,8 @@ class AddNewStoryActivity : AppCompatActivity() {
                 }
                 else -> {
                     val description =
-                        etDescription.text.toString().toRequestBody("text/plain".toMediaType())
+                        binding.etDescription.text.toString()
+                            .toRequestBody("text/plain".toMediaType())
                     val reduceFile = reduceFileImage(getFile as File)
                     val imageFile = reduceFile.asRequestBody()
                     val multiPart: MultipartBody.Part = MultipartBody.Part.createFormData(
@@ -139,17 +140,16 @@ class AddNewStoryActivity : AppCompatActivity() {
                         status.observe(this@AddNewStoryActivity) { success ->
                             showStatus(success)
                         }
+                        responses.observe(this@AddNewStoryActivity) { getRespone ->
+                            showRespones(getRespone)
+                        }
                     }
-
                     //endregion
-
                 }
-
-
             }
         }
-
     }
+
 
     private fun startCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -210,17 +210,17 @@ class AddNewStoryActivity : AppCompatActivity() {
         }
     }
 
+    private fun showRespones(response: String) {
+        Toast.makeText(this@AddNewStoryActivity, response.toString(), Toast.LENGTH_SHORT).show()
+    }
+
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
-            binding.apply {
-                loadingProgress.visibility = View.VISIBLE
-                btnPost.visibility = View.GONE
-            }
+            binding.loadingProgress.visibility = View.VISIBLE
+            binding.btnPost.visibility = View.GONE
         } else {
-            binding.apply {
-                loadingProgress.visibility = View.GONE
-                btnPost.visibility = View.VISIBLE
-            }
+            binding.loadingProgress.visibility = View.GONE
+            binding.btnPost.visibility = View.VISIBLE
         }
     }
 
