@@ -2,6 +2,7 @@ package com.example.tellstory.ui.detail
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.tellstory.coredata.remote.ListStoryItems
 import com.example.tellstory.databinding.ActivityDetailsBinding
 
@@ -15,18 +16,23 @@ class DetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        /*val getData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(DETAILS_EXTRA, ListStoryItems::class.java)
-        } else {
-            intent.getParcelableExtra<ListStoryItems>(EXTRA_DATA)
-        }*/
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val getData = intent.getParcelableExtra<ListStoryItems>(DETAILS_EXTRA)
 
         binding.apply {
             tvNameDetail.text = getData?.name
+            tvDescDetail.text = getData?.description
+            Glide.with(this@DetailsActivity).load(getData?.photoUrl).centerCrop().into(ivDetails)
         }
 
 
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+
+        return super.onSupportNavigateUp()
     }
 
 
