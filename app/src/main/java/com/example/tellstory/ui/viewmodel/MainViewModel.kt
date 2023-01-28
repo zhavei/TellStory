@@ -15,7 +15,7 @@ class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() 
 
 
     private var _listStory = MutableLiveData<GetAllStoriesResponse>()
-    val listStory: LiveData<GetAllStoriesResponse> get() = _listStory
+    val     listStory: LiveData<GetAllStoriesResponse> get() = _listStory
 
     private var _userName = MutableLiveData<ListStoryItems>()
     val userName: LiveData<ListStoryItems> get() = _userName

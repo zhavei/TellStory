@@ -11,7 +11,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.common.ViewModelFactory
 import com.example.tellstory.coredata.model.StoryUser
@@ -70,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupAction() {
         mainViewModel.isUserLogin().observe(this) { user ->
             if (user.isUserLogin) {
-                //region how to welcomed the name?
+                //region welcomed the name
                 welcomedUser()
                 //endregion
                 setupAdapter()
@@ -97,13 +96,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        val storyAdapter = StoryAdapter()
+        var storyAdapter = StoryAdapter()
 
         mainViewModel.apply {
             listStory.observe(this@MainActivity) {
                 //set the adapter
-                val list = it.listStoryItems
-                storyAdapter.submitList(list)
+                if (it != null) {
+                    val list = it.listStoryItems
+                    storyAdapter.submitList(list)
+                }
             }
         }
 

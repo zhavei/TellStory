@@ -2,7 +2,6 @@ package com.example.tellstory.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +16,7 @@ class StoryAdapter : ListAdapter<ListStoryItems, StoryAdapter.StoryViewHolders>(
     var onItemClickCallback: OnItemClickcallback? = null
 
     private object DIFFUTILS : DiffUtil.ItemCallback<ListStoryItems>() {
+        // DiffUtil uses this test to help discover if an item was added, removed, or moved.
         override fun areItemsTheSame(oldItem: ListStoryItems, newItem: ListStoryItems): Boolean {
             return oldItem.id == newItem.id
         }
@@ -70,5 +70,6 @@ class StoryAdapter : ListAdapter<ListStoryItems, StoryAdapter.StoryViewHolders>(
         }
     }
 
+    override fun getItemCount() = currentList.size
 
 }
