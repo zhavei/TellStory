@@ -37,7 +37,6 @@ class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() 
 
     fun getListStories(token: String) {
         val apiService = ApiConfig.getApiService().getAllStoriesService(BEARER + token)
-        //val apiService = apiService.getAllStoriesService(BEARER + token)
         apiService.enqueue(object : Callback<GetAllStoriesResponse> {
             override fun onResponse(
                 call: Call<GetAllStoriesResponse>,

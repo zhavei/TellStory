@@ -7,10 +7,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.tellstory.R
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.common.ViewModelFactory
 import com.example.tellstory.coredata.model.StoryUser
@@ -20,6 +23,7 @@ import com.example.tellstory.databinding.ActivityMainBinding
 import com.example.tellstory.ui.auth.LoginActivity
 import com.example.tellstory.ui.detail.DetailsActivity
 import com.example.tellstory.ui.newstory.AddNewStoryActivity
+import com.example.tellstory.ui.profile.UserProfileActivity
 import com.example.tellstory.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,6 +46,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        supportActionBar?.hide()
+
+        binding.apply {
+            cardViewMain.setOnClickListener {
+                val optionsCompat: ActivityOptionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        this@MainActivity,
+                        Pair(cardViewMain, getString(R.string.photo_profile)),
+                        Pair(tvUserNameMain, getString(R.string.user_name))
+                    )
+                startActivity(
+                    Intent(this@MainActivity, UserProfileActivity::class.java),
+                    optionsCompat.toBundle()
+                )
+            }
+        }
 
         //region observe the user and token
         mainViewModel.getUser().observe(this) { user ->
@@ -110,6 +131,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.apply {
             rvMain.layoutManager = GridLayoutManager(this@MainActivity, 2)
+            rvMain.setHasFixedSize(true)
             rvMain.adapter = storyAdapter
         }
 
@@ -132,6 +154,7 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(this, "this ${name.name} status", Toast.LENGTH_SHORT).show()
     }
+
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
