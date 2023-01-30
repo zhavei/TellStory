@@ -32,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:paddingStart="18dp"
+        android:paddingEnd="18dp"
         android:text="Hello Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="20sp"
@@ -39,6 +40,25 @@
         app:layout_constraintBottom_toTopOf="@+id/rv_main"
         app:layout_constraintStart_toEndOf="@+id/card_view_main"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_exit"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/bright_orange"
+        app:cardCornerRadius="100dp"
+        app:layout_constraintBottom_toBottomOf="@+id/card_view_main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/card_view_main">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_exit_to_app_24" />
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_main"

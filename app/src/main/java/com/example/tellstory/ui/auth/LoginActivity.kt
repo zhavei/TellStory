@@ -61,8 +61,6 @@ class LoginActivity : AppCompatActivity() {
                 else -> {
                     userLogin(email, pass)
                     loginViewModel.userLogin()
-                    //testing get user
-                    loginViewModel.userNam(storyUser)
                     }
                 }
             }
@@ -87,16 +85,18 @@ class LoginActivity : AppCompatActivity() {
                     loginViewModel.userToken(
                         StoryUser(
                             storyUser.userEmail,
-                            storyUser.userName,
+                            body.loginResult.name,
                             body.loginResult.token,
                             storyUser.userPass,
                             false
                         )
                     )
-                    toMainActivity()
+
+                    val userWelCome = body.loginResult.name
+                    toMainActivity(userWelCome)
                     Toast.makeText(
                         this@LoginActivity,
-                        " login ${response.message()}",
+                        " Welcome $userWelCome",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
@@ -118,14 +118,32 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun toMainActivity() {
-        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+    private fun toMainActivity(name: String) {
+        val getName = intent.getStringExtra(LOGIN_EXTRA)
+        if (getName != null && getName.isNotEmpty()) {
+            Intent(this@LoginActivity, MainActivity::class.java).also {
+                it.putExtra(MainActivity.MAIN_EXTRA, name)
+                startActivity(it)
+                finish()
+            }
+        } else if (name.isEmpty()) {
+            Intent(this@LoginActivity, MainActivity::class.java).also {
+                it.putExtra(MainActivity.MAIN_EXTRA, getName)
+                startActivity(it)
+                finish()
+            }
+        } else {
+            Intent(this@LoginActivity, MainActivity::class.java).also {
+                it.putExtra(MainActivity.MAIN_EXTRA, name)
+                startActivity(it)
+                finish()
+            }
+        }
     }
 
     companion object {
         private val TAG = LoginActivity::class.java.simpleName
+        val LOGIN_EXTRA = "login_extra"
     }
 
 }

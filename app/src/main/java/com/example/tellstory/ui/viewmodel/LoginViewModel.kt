@@ -27,11 +27,4 @@ class LoginViewModel(private val preferences: UserDataPreferences) : ViewModel()
         }
     }
 
-    //testing get user
-    fun userNam(user: StoryUser) {
-        viewModelScope.launch {
-            preferences.getUserName(user)
-        }
-    }
-
 }

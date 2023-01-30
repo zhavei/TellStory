@@ -1,6 +1,7 @@
 package com.example.tellstory.ui.auth
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -59,58 +60,27 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun register(name: String, email: String, pass: String) {
 
+        toLoginActivity(name)
+
         signUpViewModel.apply {
             newRegister(name, email, pass)
             showLog(this.toastMessage)
+
         }
+    }
 
-        //newRegis(name, email, pass)
-
-
+    private fun toLoginActivity(name: String) {
+        Intent(this@RegisterActivity, LoginActivity::class.java).also {
+            it.putExtra(LoginActivity.LOGIN_EXTRA, name)
+            startActivity(it)
+            finish()
+        }
     }
 
     private fun showLog(toastMessage: LiveData<String>) {
         Log.d(TAG, toastMessage.toString())
 
     }
-
-    /*fun newRegis(name: String, email: String, pass: String) {
-        val registerService = apiService.registerService(name, email, pass)
-        //val registerService = ApiConfig.getApiService().registerService(name, email, pass)
-
-        registerService.enqueue(object : Callback<RegisterResponse> {
-            override fun onResponse(
-                call: Call<RegisterResponse>,
-                response: Response<RegisterResponse>
-            ) {
-                val body = response.body()
-                if (response.isSuccessful && body != null) {
-
-                    if (body.message != "Email is already taken") {
-                        signUpViewModel.saveNewAuth(
-                            StoryUser(
-                                email,
-                                name,
-                                "",
-                                pass,
-                                false
-                            )
-                        )
-                        Log.d("registerActivityu", response.message())
-                    }
-                } else {
-                    Log.e("registerActivity", response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                Log.d("registerActivity", "fail${t.message}")
-                t.printStackTrace()
-            }
-
-        })
-
-    }*/
 
     companion object {
         private val TAG = RegisterActivity::class.java.simpleName

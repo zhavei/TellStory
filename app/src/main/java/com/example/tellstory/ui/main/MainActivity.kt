@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
+
         binding.apply {
             cardViewMain.setOnClickListener {
                 val optionsCompat: ActivityOptionsCompat =
@@ -61,6 +62,10 @@ class MainActivity : AppCompatActivity() {
                     Intent(this@MainActivity, UserProfileActivity::class.java),
                     optionsCompat.toBundle()
                 )
+            }
+
+            cvExit.setOnClickListener {
+                mainViewModel.signOut()
             }
         }
 
@@ -126,10 +131,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupName() {
-        /*  mainViewModel.getUserNames().observe(this) {
-              binding.tvUserNameMain.text = it.userName
-              Log.d(TAG, "tester Username ")
-          }*/
+        val getData = intent.getStringExtra(MAIN_EXTRA)
+        binding.tvUserNameMain.text = getData
+        Log.d(TAG, "testing to $getData")
     }
 
     private fun setupAdapter() {
@@ -158,7 +162,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
     }
 
 
@@ -174,5 +177,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
+        const val MAIN_EXTRA = "main_activity"
     }
+
 }

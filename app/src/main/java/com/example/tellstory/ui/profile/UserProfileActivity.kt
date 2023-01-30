@@ -28,5 +28,10 @@ class UserProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+    }
+
+    companion object {
+        val USER_PROFILE_EXTRA = "user_profile"
     }
 }
