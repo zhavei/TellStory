@@ -61,6 +61,8 @@ class LoginActivity : AppCompatActivity() {
                 else -> {
                     userLogin(email, pass)
                     loginViewModel.userLogin()
+                    //testing get user
+                    loginViewModel.userNam(storyUser)
                     }
                 }
             }

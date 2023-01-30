@@ -70,10 +70,19 @@ class MainActivity : AppCompatActivity() {
             this.storyUser = user
             //get the token
             val token = user.userToken
+            val userN = user.userName
+            Log.d(TAG, "testing ${user.userToken}")
+            Log.d(TAG, "testing $userN")
             mainViewModel.getListStories(token)
         }
         //endregion
         setupAction()
+
+        //get userName still empty
+        mainViewModel.getUser().observe(this@MainActivity) {
+            this.storyUser = it
+            Log.d(TAG, "testingg ${it.userName}")
+        }
 
         // region add new story
         binding.apply {
@@ -91,9 +100,10 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.isUserLogin().observe(this) { user ->
             if (user.isUserLogin) {
                 //region welcomed the name
-                welcomedUser()
+                welcomedUser(user.userName)
                 //endregion
                 setupAdapter()
+                setupName()
             } else {
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(intent)
@@ -103,17 +113,23 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun welcomedUser() {
+    private fun welcomedUser(userN: String) {
         mainViewModel.apply {
             userName.observe(this@MainActivity) {
                 //set the welcome
                 val user = it.name
                 Log.d(TAG, "check the name: -> $user")
-                Toast.makeText(this@MainActivity, "Hello $user", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Hello ${userN.toString()}", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
+    }
 
-
+    private fun setupName() {
+        /*  mainViewModel.getUserNames().observe(this) {
+              binding.tvUserNameMain.text = it.userName
+              Log.d(TAG, "tester Username ")
+          }*/
     }
 
     private fun setupAdapter() {
@@ -137,7 +153,7 @@ class MainActivity : AppCompatActivity() {
 
         storyAdapter.onItemClickCallback = object : StoryAdapter.OnItemClickcallback {
             override fun onItemClicked(name: ListStoryItems) {
-                //todetail activity
+                //to detail activity
                 toDetailActivity(name)
             }
         }

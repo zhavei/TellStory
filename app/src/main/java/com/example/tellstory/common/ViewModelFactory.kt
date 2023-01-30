@@ -2,12 +2,7 @@ package com.example.tellstory.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.tellstory.coredata.remote.ApiService
-import com.example.tellstory.ui.viewmodel.AddNewStoryViewModel
-import com.example.tellstory.ui.viewmodel.LoginViewModel
-import com.example.tellstory.ui.viewmodel.MainViewModel
-import com.example.tellstory.ui.viewmodel.RegisterViewModel
-import javax.inject.Inject
+import com.example.tellstory.ui.viewmodel.*
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory (
@@ -28,6 +23,9 @@ class ViewModelFactory (
             }
             modelClass.isAssignableFrom(AddNewStoryViewModel::class.java) -> {
                 AddNewStoryViewModel(userDataPreferences) as T
+            }
+            modelClass.isAssignableFrom(UserProfileViewModel::class.java) -> {
+                UserProfileViewModel(userDataPreferences) as T
             }
             else -> throw IllegalArgumentException("Unrecognized ViewModel class: " + modelClass.name)
         }

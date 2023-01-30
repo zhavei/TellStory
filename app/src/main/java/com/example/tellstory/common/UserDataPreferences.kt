@@ -39,6 +39,13 @@ class UserDataPreferences private constructor(private val userDataStore: DataSto
         }
     }
 
+    //testing get user
+    suspend fun getUserName(user: StoryUser) {
+        userDataStore.edit { userN ->
+            userN[KEY_USER_NAME] = user.userName
+        }
+    }
+
     suspend fun logOutUser() {
         userDataStore.edit { logOutUser ->
             logOutUser[KEY_IS_LOGIN] = false

@@ -15,8 +15,9 @@ class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() 
 
 
     private var _listStory = MutableLiveData<GetAllStoriesResponse>()
-    val     listStory: LiveData<GetAllStoriesResponse> get() = _listStory
+    val listStory: LiveData<GetAllStoriesResponse> get() = _listStory
 
+    //are these work?
     private var _userName = MutableLiveData<ListStoryItems>()
     val userName: LiveData<ListStoryItems> get() = _userName
 
@@ -28,6 +29,11 @@ class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() 
     fun getUser(): LiveData<StoryUser> {
         return preferences.getUserStory().asLiveData()
     }
+
+    //to get userName
+    /*suspend fun getUserNames(): LiveData<StoryUser> {
+        return preferences.getUserName().asLiveData()
+    }*/
 
     fun signOut() {
         viewModelScope.launch {
