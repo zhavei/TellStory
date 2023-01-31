@@ -6,4 +6,5 @@
     <string name="take_your_picture">Please Take Your Image</string>
     <string name="photo_profile">Photo Profile</string>
     <string name="user_name">User Name</string>
+    <string name="register">register</string>
 </resources>

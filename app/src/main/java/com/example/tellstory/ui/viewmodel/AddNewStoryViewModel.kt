@@ -37,7 +37,6 @@ class AddNewStoryViewModel(
         _loading.value = true
         val requestService =
             ApiConfig.getApiService().addNewStoryService(BEARER + token, file, description)
-        /*val requestService = apiService.addNewStoryService(BEARER + token, file, description)*/
         requestService.enqueue(object : Callback<AddNewStoryResponse> {
             override fun onResponse(
                 call: Call<AddNewStoryResponse>,

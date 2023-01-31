@@ -31,7 +31,12 @@ class RegisterViewModel (
     private var _statusMessage = MutableLiveData<Boolean>()
     val statusMessage: LiveData<Boolean> get() = _statusMessage
 
+    private var _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean> get() = _loading
+
     fun newRegister(name: String, email: String, pass: String) {
+        _loading.value = true
+
         val registerService = ApiConfig.getApiService().registerService(name, email, pass)
 
         registerService.enqueue(object : Callback<RegisterResponse> {
@@ -39,9 +44,12 @@ class RegisterViewModel (
                 call: Call<RegisterResponse>,
                 response: Response<RegisterResponse>
             ) {
-                val body = response.body()
-                if (response.isSuccessful && body != null) {
-                    if (body.message != "Email is already taken") {
+
+                if (response.isSuccessful) {
+                    _loading.value = true //loading
+                    _statusMessage.value = true
+                    val body = response.body()
+                    if (body?.error != true && body != null) {
                         saveNewAuth(
                             StoryUser(
                                 email,
@@ -51,14 +59,11 @@ class RegisterViewModel (
                                 false
                             )
                         )
-                        _toastMessage.value = body.message.toString()
-                        _statusMessage.value = true
-                        Log.d("registerActivity", response.message())
-                    }
-                } else {
-                    if (body != null) {
-                        if (body.message == "Email is already taken") {
-                            saveNewAuth(
+                        _toastMessage.postValue(" this ${body.message}")
+                        Log.d("registerActivity", body.message)
+                    } else {
+                        if (body?.error == true && body.message == "Email is already taken") {
+                            /*saveNewAuth(
                                 StoryUser(
                                     email,
                                     name,
@@ -66,16 +71,19 @@ class RegisterViewModel (
                                     pass,
                                     false
                                 )
-                            )
-                            _toastMessage.value = "Email is already taken"
+                            )*/
+                            _toastMessage.postValue(" this ${body.message}")
+                            _loading.value = true //loading
                             _statusMessage.value = false
+                            Log.e("registerActivity", response.message())
                         }
-                        Log.e("registerActivity", response.message())
                     }
                 }
             }
 
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                _loading.value = false //loading
+                _statusMessage.value = false
                 Log.d("registerActivity", "fail${t.message}")
                 t.printStackTrace()
             }
