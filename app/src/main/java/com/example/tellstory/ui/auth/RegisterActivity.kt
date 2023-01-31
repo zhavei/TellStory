@@ -3,9 +3,11 @@ package com.example.tellstory.ui.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -59,49 +61,18 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun register(name: String, email: String, pass: String) {
-
-        //toLoginActivity(name)
-
-        /*signUpViewModel.newRegister(name, email, pass)
-        signUpViewModel.statusMessage.observe(this@RegisterActivity) { statusMessage ->
-            signUpViewModel.toastMessage.observe(this@RegisterActivity) { message ->
-
-                if (statusMessage) {
-                    signUpViewModel.loading.observe(this@RegisterActivity) {
-                        showLoading(it)
-                    }
-                } else {
-                    AlertDialog.Builder(this@RegisterActivity)
-                        .setTitle(R.string.register).setMessage(message)
-                        .setPositiveButton("YES") { _, _ ->
-                            finish()
-                        }.create().show()
-                }
-            }
-        }*/
+        sendToLoginActivity(name) //send name from register
 
         signUpViewModel.apply {
             newRegister(name, email, pass)
             loading.observe(this@RegisterActivity) {
                 showLoading(it)
             }
-            statusMessage.observe(this@RegisterActivity) { ifStatus ->
-                toastMessage.observe(this@RegisterActivity) { message ->
-
-                    if (ifStatus) {
-                        loading.observe(this@RegisterActivity) { loading ->
-                            showLoading(loading)
-                        }
-                        /*android.app.AlertDialog.Builder(this@RegisterActivity)
-                            .setTitle(R.string.register).setMessage(message)
-                            .setPositiveButton("YES") { _, _ ->
-                                finish()
-                            }.create().show()*/
-                        showStatus(ifStatus)
-                    } else {
-                        showStatus(ifStatus)
-                    }
-                }
+            statusMessage.observe(this@RegisterActivity) {
+                showStatus(it)
+            }
+            toastMessage.observe(this@RegisterActivity) {
+                Log.d(TAG, "testing toast")
             }
         }
     }
@@ -125,11 +96,9 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun toLoginActivity(name: String) {
+    private fun sendToLoginActivity(name: String) {
         Intent(this@RegisterActivity, LoginActivity::class.java).also {
             it.putExtra(LoginActivity.LOGIN_EXTRA, name)
-            startActivity(it)
-            finish()
         }
     }
 

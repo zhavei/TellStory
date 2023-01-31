@@ -29,6 +29,9 @@ class UserProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        val getData = intent.getStringExtra(USER_PROFILE_EXTRA)
+        binding.tvUserNameMain.text = "hello $getData"
+
     }
 
     companion object {

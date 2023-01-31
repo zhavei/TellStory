@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.apply {
+            val getData = intent.getStringExtra(MAIN_EXTRA)
             cardViewMain.setOnClickListener {
                 val optionsCompat: ActivityOptionsCompat =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -59,8 +60,10 @@ class MainActivity : AppCompatActivity() {
                         Pair(tvUserNameMain, getString(R.string.user_name))
                     )
                 startActivity(
-                    Intent(this@MainActivity, UserProfileActivity::class.java),
-                    optionsCompat.toBundle()
+                    Intent(this@MainActivity, UserProfileActivity::class.java).also {
+                        it.putExtra(UserProfileActivity.USER_PROFILE_EXTRA, getData)
+                    },
+                    optionsCompat.toBundle(),
                 )
             }
 
@@ -108,6 +111,7 @@ class MainActivity : AppCompatActivity() {
                 welcomedUser(user.userName)
                 //endregion
                 setupAdapter()
+                //setup userName
                 setupName()
             } else {
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)

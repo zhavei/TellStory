@@ -30,10 +30,6 @@ class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() 
         return preferences.getUserStory().asLiveData()
     }
 
-    //to get userName
-    /*suspend fun getUserNames(): LiveData<StoryUser> {
-        return preferences.getUserName().asLiveData()
-    }*/
 
     fun signOut() {
         viewModelScope.launch {

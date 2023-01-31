@@ -44,12 +44,9 @@ class RegisterViewModel (
                 call: Call<RegisterResponse>,
                 response: Response<RegisterResponse>
             ) {
-
                 if (response.isSuccessful) {
-                    _loading.value = true //loading
-                    _statusMessage.value = true
                     val body = response.body()
-                    if (body?.error != true && body != null) {
+                    if (body?.error != true && body != null && body.message != "Email is already taken") {
                         saveNewAuth(
                             StoryUser(
                                 email,
@@ -59,31 +56,21 @@ class RegisterViewModel (
                                 false
                             )
                         )
-                        _toastMessage.postValue(" this ${body.message}")
-                        Log.d("registerActivity", body.message)
-                    } else {
-                        if (body?.error == true && body.message == "Email is already taken") {
-                            /*saveNewAuth(
-                                StoryUser(
-                                    email,
-                                    name,
-                                    "",
-                                    pass,
-                                    false
-                                )
-                            )*/
-                            _toastMessage.postValue(" this ${body.message}")
-                            _loading.value = true //loading
-                            _statusMessage.value = false
-                            Log.e("registerActivity", response.message())
-                        }
                     }
+                    _loading.value = false //loading
+                    _statusMessage.value = true
+                    _toastMessage.value = " this ${body?.message}"
+                    Log.d("registerActivity", body!!.message)
+                } else {
+                    val body = response.body()
+                    _toastMessage.value = "this ${body?.message}"
+                    _loading.value = false //loading
+                    _statusMessage.value = false
                 }
             }
 
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
                 _loading.value = false //loading
-                _statusMessage.value = false
                 Log.d("registerActivity", "fail${t.message}")
                 t.printStackTrace()
             }

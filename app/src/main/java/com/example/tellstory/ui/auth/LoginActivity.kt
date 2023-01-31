@@ -99,6 +99,7 @@ class LoginActivity : AppCompatActivity() {
                         " Welcome $userWelCome",
                         Toast.LENGTH_SHORT
                     ).show()
+
                 } else {
                     Log.d(TAG, "is success? =  ${response.message()}")
                     Toast.makeText(
@@ -115,11 +116,10 @@ class LoginActivity : AppCompatActivity() {
             }
 
         })
-
     }
 
     private fun toMainActivity(name: String) {
-        val getName = intent.getStringExtra(LOGIN_EXTRA)
+        val getName = intent.getStringExtra(LOGIN_EXTRA) //from register
         if (getName != null && getName.isNotEmpty()) {
             Intent(this@LoginActivity, MainActivity::class.java).also {
                 it.putExtra(MainActivity.MAIN_EXTRA, name)

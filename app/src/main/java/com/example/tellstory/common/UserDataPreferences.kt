@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.tellstory.coredata.model.StoryUser
+import com.example.tellstory.coredata.remote.LoginResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -52,7 +53,6 @@ class UserDataPreferences private constructor(private val userDataStore: DataSto
     suspend fun userToken(user: StoryUser) {
         userDataStore.edit { userToken ->
             userToken[KEY_USER_TOKEN] = user.userToken
-            userToken[KEY_USER_NAME] = user.userName
         }
     }
 
