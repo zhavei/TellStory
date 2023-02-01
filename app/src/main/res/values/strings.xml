@@ -7,4 +7,8 @@
     <string name="photo_profile">Photo Profile</string>
     <string name="user_name">User Name</string>
     <string name="register">register</string>
+    <string name="user_profile">User Profile</string>
+    <string name="are_you_sure">Are you sure you want to exit?</string>
+    <string name="yes_dialog">Yes</string>
+    <string name="no_dialog">No</string>
 </resources>

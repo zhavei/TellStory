@@ -43,6 +43,7 @@ class StoryAdapter : ListAdapter<ListStoryItems, StoryAdapter.StoryViewHolders>(
             }
             itemView.setOnClickListener {
                 itemClickcallback.invoke()
+
             }
         }
 

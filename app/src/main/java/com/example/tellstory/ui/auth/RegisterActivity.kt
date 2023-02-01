@@ -72,14 +72,14 @@ class RegisterActivity : AppCompatActivity() {
                 showStatus(it)
             }
             toastMessage.observe(this@RegisterActivity) {
-                Log.d(TAG, "testing toast")
+                Log.d(TAG, "testing toast $it")
+                Toast.makeText(this@RegisterActivity, it, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun showStatus(statusSuccess: Boolean) {
         if (statusSuccess) {
-            Toast.makeText(this, "Register Success", Toast.LENGTH_SHORT).show()
             finish()
         } else {
             Toast.makeText(this, "Email is already taken", Toast.LENGTH_SHORT).show()

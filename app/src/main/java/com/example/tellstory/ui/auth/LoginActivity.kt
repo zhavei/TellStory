@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -76,6 +78,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun userLogin(email: String, pass: String) {
+        showLoading(true)
         val service = apiService.loginService(email, pass)
 
         service.enqueue(object : Callback<LoginResponse> {
@@ -101,7 +104,8 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
 
                 } else {
-                    Log.d(TAG, "is success? =  ${response.message()}")
+                    showLoading(false)
+                    Log.d(TAG, "is login success? =  ${response.message()}")
                     Toast.makeText(
                         this@LoginActivity,
                         " login ${response.message()}",
@@ -111,6 +115,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                showLoading(false)
                 Log.e(TAG, "onFailure: ${t.message}")
                 Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_SHORT).show()
             }
@@ -139,6 +144,24 @@ class LoginActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progLogin.visibility = View.VISIBLE
+            binding.btnLogin.visibility = View.GONE
+        } else {
+            binding.progLogin.visibility = View.GONE
+            binding.btnLogin.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(R.string.are_you_sure)
+        builder.setPositiveButton(R.string.yes_dialog) { _, _ -> finishAffinity() }
+        builder.setNegativeButton(R.string.no_dialog) { dialog, _ -> dialog.cancel() }
+        builder.show()
     }
 
     companion object {

@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.util.Pair
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -78,10 +80,15 @@ class MainActivity : AppCompatActivity() {
             this.storyUser = user
             //get the token
             val token = user.userToken
-            val userN = user.userName
-            Log.d(TAG, "testing ${user.userToken}")
-            Log.d(TAG, "testing $userN")
-            mainViewModel.getListStories(token)
+            Log.d(TAG, "check content token = ${user.userToken}")
+            //fix the blank if token is empty
+            if (token.isNotEmpty()){
+                mainViewModel.getListStories(token)
+            } else {
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                startActivity(intent)
+                finishAffinity()
+            }
         }
         //endregion
         setupAction()
@@ -137,7 +144,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupName() {
         val getData = intent.getStringExtra(MAIN_EXTRA)
         binding.tvUserNameMain.text = getData
-        Log.d(TAG, "testing to $getData")
+        Log.d(TAG, "testing to get Name $getData")
     }
 
     private fun setupAdapter() {
@@ -172,10 +179,21 @@ class MainActivity : AppCompatActivity() {
     private fun toDetailActivity(name: ListStoryItems) {
         Intent(this, DetailsActivity::class.java).also {
             it.putExtra(DetailsActivity.DETAILS_EXTRA, name)
-            startActivity(it)
+            startActivity(
+                it,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity).toBundle()
+            )
         }
 
         Toast.makeText(this, "this ${name.name} status", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(R.string.are_you_sure)
+        builder.setPositiveButton(R.string.yes_dialog) { _, _ -> finishAffinity() }
+        builder.setNegativeButton(R.string.no_dialog) { dialog, _ -> dialog.cancel() }
+        builder.show()
     }
 
 

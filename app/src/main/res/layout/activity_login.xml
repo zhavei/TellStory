@@ -7,6 +7,7 @@
     tools:context=".ui.auth.LoginActivity">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -22,26 +23,34 @@
             android:text="duck@gmail.com" />
 
         <EditText
-            android:layout_margin="12dp"
+            android:id="@+id/etPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etPass"
+            android:layout_margin="12dp"
             android:text="123456" />
 
         <Button
+            android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnLogin"
             android:layout_margin="12dp"
             android:text="login" />
 
         <Button
+            android:id="@+id/btnToRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:id="@+id/btnToRegister"
-            android:text="register"/>
+            android:text="register" />
     </LinearLayout>
+
+    <ProgressBar
+        android:visibility="invisible"
+        android:id="@+id/prog_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,14 +56,24 @@ class RegisterViewModel (
                                 false
                             )
                         )
+                        _loading.value = false //loading
+                        _statusMessage.value = true
+                        _toastMessage.value =
+                            " this ${body.message} Successfully" //the message is appear here.
+                        Log.d("registerActivity status", body.message)
                     }
-                    _loading.value = false //loading
-                    _statusMessage.value = true
-                    _toastMessage.value = " this ${body?.message}"
-                    Log.d("registerActivity", body!!.message)
                 } else {
                     val body = response.body()
-                    _toastMessage.value = "this ${body?.message}"
+                    saveNewAuth(
+                        StoryUser(
+                            email,
+                            name,
+                            "",
+                            pass,
+                            false
+                        )
+                    )
+                    //_toastMessage.value = "this send ${body?.error}" //this send null message
                     _loading.value = false //loading
                     _statusMessage.value = false
                 }
