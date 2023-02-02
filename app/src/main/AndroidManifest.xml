@@ -55,6 +55,7 @@
                 android:value="" />
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".ui.auth.RegisterActivity"
             android:exported="false">
             <meta-data
@@ -62,6 +63,7 @@
                 android:value="" />
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".ui.auth.LoginActivity"
             android:exported="true">
             <meta-data

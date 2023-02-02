@@ -187,18 +187,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun playAnimation() {
-        ObjectAnimator.ofFloat(binding.cardViewMain, View.TRANSLATION_X, -30f, 30f).apply {
+        ObjectAnimator.ofFloat(binding.cardViewMain, View.TRANSLATION_X, -20f, 50f).apply {
             duration = 6000
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }.start()
-        ObjectAnimator.ofFloat(binding.tvAppName, View.TRANSLATION_X, -30f, 30f).apply {
+        ObjectAnimator.ofFloat(binding.tvAppName, View.TRANSLATION_X, -20f, 50f).apply {
             duration = 6000
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.REVERSE
         }.start()
 
+
         val loginText = ObjectAnimator.ofFloat(binding.tvLoginText, View.ALPHA, 1f).setDuration(500)
+        val loginLinear = ObjectAnimator.ofFloat(binding.linearLayout2, View.ALPHA, 1f).setDuration(500)
         val etlogin = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(500)
         val etPass = ObjectAnimator.ofFloat(binding.etPass, View.ALPHA, 1f).setDuration(500)
         val btnLogin = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(500)
@@ -207,11 +209,11 @@ class LoginActivity : AppCompatActivity() {
         val singUp = ObjectAnimator.ofFloat(binding.tvToRegister, View.ALPHA, 1f).setDuration(500)
 
         val together = AnimatorSet().apply {
-            playTogether(etlogin, etPass)
+            playTogether(loginText, etlogin, etPass)
         }
 
         AnimatorSet().apply {
-            playSequentially(loginText, together, btnLogin, tvDontHaveAcc, singUp)
+            playSequentially( loginLinear, together, btnLogin, tvDontHaveAcc, singUp)
             start()
         }
     }

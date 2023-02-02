@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TellStory</string>
+    <string name="empty_email">email kosong</string>
+    <string name="empty_password">password kosong</string>
+    <string name="empty_desc">masukan deskripsi</string>
+    <string name="take_your_picture">silahkan ambil gambar</string>
+    <string name="photo_profile">Foto Profil</string>
+    <string name="user_name">Nama Pengguna</string>
+    <string name="register">Daftar</string>
+    <string name="user_profile">Profil Pengguna</string>
+    <string name="are_you_sure">Keluar Aplikasi?</string>
+    <string name="yes_dialog">Ya</string>
+    <string name="no_dialog">Tidak</string>
+    <string name="invalid_pasword">kata sandi salah</string>
+    <string name="enter_your_pass">masukan kata sandi</string>
+    <string name="email_invalid">alamat email salah</string>
+    <string name="enter_your_email">masukan alamat email</string>
+    <string name="dont_have_account">Belum Punya Akun?</string>
+    <string name="Signup">Daftar!</string>
+    <string name="name_cannot_empty">nama kosong</string>
+    <string name="login">Masuk</string>
+    <string name="already_have_account">Sudah Punya Akun?</string>
+    <string name="enter_your_name">Masukan Nama Anda</string>
+    <string name="hello_user">Pengguna TellStory</string>
+    <string name="hello_name">pengaturan</string>
+    <string name="language">bahasa</string>
+    <string name="change">ganti</string>
+
+</resources>

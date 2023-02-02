@@ -1,5 +1,7 @@
 package com.example.tellstory.ui.auth
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -37,6 +39,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         supportActionBar?.hide()
+        playAnimation()
 
 
         binding.btnregister.setOnClickListener {
@@ -107,6 +110,38 @@ class RegisterActivity : AppCompatActivity() {
     private fun sendToLoginActivity(name: String) {
         Intent(this@RegisterActivity, LoginActivity::class.java).also {
             it.putExtra(LoginActivity.LOGIN_EXTRA, name)
+        }
+    }
+
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(binding.cardViewMain, View.TRANSLATION_X, -20f, 50f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+        ObjectAnimator.ofFloat(binding.tvAppName, View.TRANSLATION_X, -20f, 50f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val loginText = ObjectAnimator.ofFloat(binding.tvSighup, View.ALPHA, 1f).setDuration(500)
+        val etName = ObjectAnimator.ofFloat(binding.etName, View.ALPHA, 1f).setDuration(500)
+        val etlinear = ObjectAnimator.ofFloat(binding.linearLayout, View.ALPHA, 1f).setDuration(500)
+        val etRegister = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(500)
+        val etPass = ObjectAnimator.ofFloat(binding.etPass, View.ALPHA, 1f).setDuration(500)
+        val btnLogin = ObjectAnimator.ofFloat(binding.btnregister, View.ALPHA, 1f).setDuration(500)
+        val tvDontHaveAcc =
+            ObjectAnimator.ofFloat(binding.dontHaveAccount, View.ALPHA, 1f).setDuration(500)
+        val singUp = ObjectAnimator.ofFloat(binding.tvTologin, View.ALPHA, 1f).setDuration(500)
+
+        val together = AnimatorSet().apply {
+            playTogether(etlinear, etName, etRegister, etPass)
+        }
+
+        AnimatorSet().apply {
+            playSequentially(loginText, together, btnLogin, tvDontHaveAcc, singUp)
+            start()
         }
     }
 

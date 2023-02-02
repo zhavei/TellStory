@@ -18,8 +18,12 @@
     <string name="dont_have_account">Dont Have Account?</string>
     <string name="Signup">Signup!</string>
     <string name="name_cannot_empty">name cannot empty</string>
-    <string name="login">Login!</string>
+    <string name="login">Login</string>
     <string name="already_have_account">Already Have Account?</string>
     <string name="enter_your_name">enter your name</string>
+    <string name="hello_user">TellStory User</string>
+    <string name="hello_name">Setting</string>
+    <string name="language">Language</string>
+    <string name="change">change</string>
 
 </resources>

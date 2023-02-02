@@ -141,7 +141,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupName() {
         val getData = intent.getStringExtra(MAIN_EXTRA)
-        binding.tvAppName.text = getData
+        if (getData != null && getData.isNotEmpty()){
+            binding.tvAppName.text = getData
+        } else {
+            binding.tvAppName.text = getString(R.string.hello_user)
+        }
         Log.d(TAG, "testing to get Name $getData")
     }
 
