@@ -1,10 +1,15 @@
 package com.example.tellstory.ui.auth
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -45,6 +50,9 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        setupView()
+        playAnimation()
+
         loginViewModel.getUser().observe(this) { user ->
             this.storyUser = user
         }
@@ -68,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
         binding.apply {
-            btnToRegister.setOnClickListener {
+            tvToRegister.setOnClickListener {
                 Intent(this@LoginActivity, RegisterActivity::class.java).also {
                     startActivity(it)
                 }
@@ -108,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
                     Log.d(TAG, "is login success? =  ${response.message()}")
                     Toast.makeText(
                         this@LoginActivity,
-                        " login ${response.message()}",
+                        "Invalid password or Email",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -117,7 +125,8 @@ class LoginActivity : AppCompatActivity() {
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 showLoading(false)
                 Log.e(TAG, "onFailure: ${t.message}")
-                Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, "Internet Disconnected", Toast.LENGTH_SHORT)
+                    .show()
             }
 
         })
@@ -149,9 +158,9 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             binding.progLogin.visibility = View.VISIBLE
-            binding.btnLogin.visibility = View.GONE
+            binding.btnLogin.visibility = View.INVISIBLE
         } else {
-            binding.progLogin.visibility = View.GONE
+            binding.progLogin.visibility = View.INVISIBLE
             binding.btnLogin.visibility = View.VISIBLE
         }
     }
@@ -162,6 +171,49 @@ class LoginActivity : AppCompatActivity() {
         builder.setPositiveButton(R.string.yes_dialog) { _, _ -> finishAffinity() }
         builder.setNegativeButton(R.string.no_dialog) { dialog, _ -> dialog.cancel() }
         builder.show()
+    }
+
+    private fun setupView() {
+        @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
+        supportActionBar?.hide()
+    }
+
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(binding.cardViewMain, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+        ObjectAnimator.ofFloat(binding.tvAppName, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val loginText = ObjectAnimator.ofFloat(binding.tvLoginText, View.ALPHA, 1f).setDuration(500)
+        val etlogin = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(500)
+        val etPass = ObjectAnimator.ofFloat(binding.etPass, View.ALPHA, 1f).setDuration(500)
+        val btnLogin = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(500)
+        val tvDontHaveAcc =
+            ObjectAnimator.ofFloat(binding.dontHaveAccount, View.ALPHA, 1f).setDuration(500)
+        val singUp = ObjectAnimator.ofFloat(binding.tvToRegister, View.ALPHA, 1f).setDuration(500)
+
+        val together = AnimatorSet().apply {
+            playTogether(etlogin, etPass)
+        }
+
+        AnimatorSet().apply {
+            playSequentially(loginText, together, btnLogin, tvDontHaveAcc, singUp)
+            start()
+        }
     }
 
     companion object {

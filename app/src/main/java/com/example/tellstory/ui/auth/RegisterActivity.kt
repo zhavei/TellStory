@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -37,6 +36,7 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        supportActionBar?.hide()
 
 
         binding.btnregister.setOnClickListener {
@@ -45,7 +45,7 @@ class RegisterActivity : AppCompatActivity() {
             val pass = binding.etPass.text.toString().trim()
             when {
                 name.isEmpty() -> {
-                    binding.etName.error = "name cannot empty"
+                    binding.etName.error = getString(R.string.name_cannot_empty)
                 }
                 email.isEmpty() -> {
                     binding.etEmail.error = getString(R.string.empty_email)
@@ -54,6 +54,14 @@ class RegisterActivity : AppCompatActivity() {
                     binding.etPass.error = getString(R.string.empty_password)
                 }
                 else -> register(name, email, pass)
+            }
+        }
+
+        binding.apply {
+            tvTologin.setOnClickListener {
+                Intent(this@RegisterActivity, LoginActivity::class.java).also {
+                    startActivity(it)
+                }
             }
         }
 
@@ -89,9 +97,9 @@ class RegisterActivity : AppCompatActivity() {
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             binding.loadingProgress.visibility = View.VISIBLE
-            binding.btnregister.visibility = View.GONE
+            binding.btnregister.visibility = View.INVISIBLE
         } else {
-            binding.loadingProgress.visibility = View.GONE
+            binding.loadingProgress.visibility = View.INVISIBLE
             binding.btnregister.visibility = View.VISIBLE
         }
     }

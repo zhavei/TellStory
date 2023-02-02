@@ -4,53 +4,134 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bright_orange"
     tools:context=".ui.auth.LoginActivity">
+
+    <androidx.cardview.widget.CardView
+        android:alpha="0"
+        tools:alpha="1"
+        android:id="@+id/card_view_main"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="70dp"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_add_circle_outline_24" />
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:alpha="0"
+        tools:alpha="1"
+        android:id="@+id/tv_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:text="@string/app_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/card_view_main"
+        app:layout_constraintStart_toEndOf="@+id/card_view_main"
+        app:layout_constraintTop_toTopOf="@+id/card_view_main" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="20dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/card_view_main">
 
-        <EditText
+        <TextView
+            android:id="@+id/tv_login_text"
+            android:alpha="0"
+            tools:alpha="1"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="serif"
+            android:text="Login"
+            android:textSize="40sp" />
+
+        <com.example.tellstory.ui.customview.MyEditTextEmail
+            android:alpha="0"
+            tools:alpha="1"
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:text="duck@gmail.com" />
+            android:layout_margin="12dp" />
 
-        <EditText
+        <com.example.tellstory.ui.customview.MyEditTextPassword
+            android:alpha="0"
+            tools:alpha="1"
             android:id="@+id/etPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            android:text="123456" />
+            android:inputType="textPassword" />
 
         <Button
+            android:alpha="0"
+            tools:alpha="1"
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:text="login" />
-
-        <Button
-            android:id="@+id/btnToRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:text="register" />
     </LinearLayout>
 
+    <TextView
+        android:alpha="0"
+        tools:alpha="1"
+        android:id="@+id/dont_have_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/dont_have_account"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+    <TextView
+        android:alpha="0"
+        tools:alpha="1"
+        android:id="@+id/tv_to_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/Signup"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/dont_have_account" />
+
     <ProgressBar
-        android:visibility="invisible"
         android:id="@+id/prog_login"
+        android:paddingBottom="60dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/dont_have_account"
+        tools:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

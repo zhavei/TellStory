@@ -32,11 +32,9 @@ import javax.inject.Inject
 
 private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
 
-@AndroidEntryPoint
+
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var apiService: ApiService
     private lateinit var storyUser: StoryUser
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
                         this@MainActivity,
                         Pair(cardViewMain, getString(R.string.photo_profile)),
-                        Pair(tvUserNameMain, getString(R.string.user_name))
+                        Pair(tvAppName, getString(R.string.user_name))
                     )
                 startActivity(
                     Intent(this@MainActivity, UserProfileActivity::class.java).also {
@@ -143,7 +141,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupName() {
         val getData = intent.getStringExtra(MAIN_EXTRA)
-        binding.tvUserNameMain.text = getData
+        binding.tvAppName.text = getData
         Log.d(TAG, "testing to get Name $getData")
     }
 

@@ -11,4 +11,15 @@
     <string name="are_you_sure">Are you sure you want to exit?</string>
     <string name="yes_dialog">Yes</string>
     <string name="no_dialog">No</string>
+    <string name="invalid_pasword">password invalid</string>
+    <string name="enter_your_pass">Enter Your Password</string>
+    <string name="email_invalid">invalid email</string>
+    <string name="enter_your_email">Enter Your Email</string>
+    <string name="dont_have_account">Dont Have Account?</string>
+    <string name="Signup">Signup!</string>
+    <string name="name_cannot_empty">name cannot empty</string>
+    <string name="login">Login!</string>
+    <string name="already_have_account">Already Have Account?</string>
+    <string name="enter_your_name">enter your name</string>
+
 </resources>

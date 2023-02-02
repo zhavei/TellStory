@@ -31,7 +31,7 @@ class UserProfileActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val getData = intent.getStringExtra(USER_PROFILE_EXTRA)
-        binding.tvUserNameMain.text = "hello $getData"
+        binding.tvAppName.text = "hello $getData"
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.user_profile)
