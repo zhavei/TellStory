@@ -73,7 +73,6 @@ class RegisterViewModel (
                             false
                         )
                     )
-                    //_toastMessage.value = "this send ${body?.error}" //this send null message
                     _loading.value = false //loading
                     _statusMessage.value = false
                 }

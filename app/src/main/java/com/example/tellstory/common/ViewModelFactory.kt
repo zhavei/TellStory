@@ -24,9 +24,7 @@ class ViewModelFactory (
             modelClass.isAssignableFrom(AddNewStoryViewModel::class.java) -> {
                 AddNewStoryViewModel(userDataPreferences) as T
             }
-            modelClass.isAssignableFrom(UserProfileViewModel::class.java) -> {
-                UserProfileViewModel(userDataPreferences) as T
-            }
+
             else -> throw IllegalArgumentException("Unrecognized ViewModel class: " + modelClass.name)
         }
     }

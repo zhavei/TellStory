@@ -55,7 +55,7 @@ class MyEditTextPassword : AppCompatEditText {
 
     private fun password(password: CharSequence): Boolean {
 
-        if (password.length < 8) {
+        if (password.length <= 8) {
             error = context.getString(R.string.invalid_pasword)
         }
 

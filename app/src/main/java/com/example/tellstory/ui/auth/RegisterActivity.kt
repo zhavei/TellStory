@@ -136,11 +136,11 @@ class RegisterActivity : AppCompatActivity() {
         val singUp = ObjectAnimator.ofFloat(binding.tvTologin, View.ALPHA, 1f).setDuration(500)
 
         val together = AnimatorSet().apply {
-            playTogether(etlinear, etName, etRegister, etPass)
+            playTogether(loginText, etlinear, etName, etRegister, etPass)
         }
 
         AnimatorSet().apply {
-            playSequentially(loginText, together, btnLogin, tvDontHaveAcc, singUp)
+            playSequentially( together, btnLogin, tvDontHaveAcc, singUp)
             start()
         }
     }

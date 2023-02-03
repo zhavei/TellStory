@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.util.Pair
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -19,7 +18,6 @@ import com.example.tellstory.R
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.common.ViewModelFactory
 import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.ApiService
 import com.example.tellstory.coredata.remote.ListStoryItems
 import com.example.tellstory.databinding.ActivityMainBinding
 import com.example.tellstory.ui.auth.LoginActivity
@@ -27,8 +25,6 @@ import com.example.tellstory.ui.detail.DetailsActivity
 import com.example.tellstory.ui.newstory.AddNewStoryActivity
 import com.example.tellstory.ui.profile.UserProfileActivity
 import com.example.tellstory.ui.viewmodel.MainViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
 

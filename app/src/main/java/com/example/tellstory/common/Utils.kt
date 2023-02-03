@@ -1,6 +1,5 @@
 package com.example.tellstory.common
 
-import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,16 +7,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
-import com.example.tellstory.R
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
-
-class Utils {
-    companion object {
-        const val URL = "https://story-api.dicoding.dev/v1/"
-    }
-}
 
 private const val FILENAME_FORMAT = "dd-MMM-yyyy"
 
