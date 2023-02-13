@@ -18,4 +18,6 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
     //dagger hilt plugin
     id 'com.google.dagger.hilt.android' version '2.42' apply false
+    //maps platform
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1' apply false
 }

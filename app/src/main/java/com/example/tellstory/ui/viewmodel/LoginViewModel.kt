@@ -6,7 +6,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.LoginResult
 import kotlinx.coroutines.launch
 
 
