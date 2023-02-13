@@ -25,5 +25,6 @@
     <string name="hello_name">Setting</string>
     <string name="language">Language</string>
     <string name="change">change</string>
+    <string name="signup">Signup</string>
 
 </resources>
