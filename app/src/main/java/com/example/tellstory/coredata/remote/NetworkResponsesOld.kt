@@ -28,7 +28,7 @@ data class AddNewStoryResponse(
     @field:SerializedName("message") val message: String
 )
 
-data class GetAllStoriesResponse(
+data class GetAllStoriResponse(
     @field:SerializedName("error") val error: Boolean,
     @field:SerializedName("message") val message: String,
     @field:SerializedName("listStory") val listStoryItems: List<ListStoryItems>

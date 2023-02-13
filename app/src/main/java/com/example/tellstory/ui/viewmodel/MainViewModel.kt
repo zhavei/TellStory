@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import com.example.tellstory.common.UserDataPreferences
 import com.example.tellstory.coredata.model.StoryUser
 import com.example.tellstory.coredata.remote.ApiConfig
-import com.example.tellstory.coredata.remote.GetAllStoriesResponse
+import com.example.tellstory.coredata.remote.GetAllStoriResponse
 import com.example.tellstory.coredata.remote.ListStoryItems
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -14,8 +14,8 @@ import retrofit2.Response
 class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() {
 
 
-    private var _listStory = MutableLiveData<GetAllStoriesResponse>()
-    val listStory: LiveData<GetAllStoriesResponse> get() = _listStory
+    private var _listStory = MutableLiveData<GetAllStoriResponse>()
+    val listStory: LiveData<GetAllStoriResponse> get() = _listStory
 
     //are these work?
     private var _userName = MutableLiveData<ListStoryItems>()
@@ -39,10 +39,10 @@ class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() 
 
     fun getListStories(token: String) {
         val apiService = ApiConfig.getApiService().getAllStoriesService(BEARER + token)
-        apiService.enqueue(object : Callback<GetAllStoriesResponse> {
+        apiService.enqueue(object : Callback<GetAllStoriResponse> {
             override fun onResponse(
-                call: Call<GetAllStoriesResponse>,
-                response: Response<GetAllStoriesResponse>
+                call: Call<GetAllStoriResponse>,
+                response: Response<GetAllStoriResponse>
             ) {
                 if (response.isSuccessful) {
                     val body = response.body()
@@ -50,7 +50,7 @@ class MainViewModel(private val preferences: UserDataPreferences) : ViewModel() 
                 }
             }
 
-            override fun onFailure(call: Call<GetAllStoriesResponse>, t: Throwable) {
+            override fun onFailure(call: Call<GetAllStoriResponse>, t: Throwable) {
                 t.printStackTrace()
             }
 

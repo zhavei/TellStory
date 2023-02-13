@@ -26,7 +26,7 @@ interface ApiService {
     @GET("stories")
     fun getAllStoriesService(
         @Header("Authorization") token: String,
-    ): Call<GetAllStoriesResponse>
+    ): Call<GetAllStoriResponse>
 
 
     @Multipart
