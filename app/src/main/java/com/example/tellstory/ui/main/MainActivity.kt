@@ -1,43 +1,46 @@
 package com.example.tellstory.ui.main
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.tellstory.R
-import com.example.tellstory.common.UserDataPreferencesOld
-import com.example.tellstory.common.ViewModelFactory
-import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.ListStoryItems
+import com.example.tellstory.common.ViewModelFactories
+import com.example.tellstory.common.wrapEspressoIdlingResource
+import com.example.tellstory.coredata.model.MainStory
 import com.example.tellstory.databinding.ActivityMainBinding
 import com.example.tellstory.ui.auth.LoginActivity
 import com.example.tellstory.ui.detail.DetailsActivity
 import com.example.tellstory.ui.newstory.AddNewStoryActivity
 import com.example.tellstory.ui.profile.UserProfileActivity
 import com.example.tellstory.ui.viewmodel.MainViewModel
-
-private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var storyUser: StoryUser
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val mainViewModel: MainViewModel by viewModels {
-        ViewModelFactory(UserDataPreferencesOld.getInstance(userDataStore))
+        ViewModelFactories.getInstance(application)
     }
+
+    private lateinit var storyAdapter: StoryAdapter
+    private var isUploaded: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,33 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
 
+        mainViewModel.loading.observe(this) {
+            showLoading(it)
+        }
+
+        //region observe logout status
+        mainViewModel.signOut.observe(this) {
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+            finishAffinity()
+        }
+
+        binding.cvExit.setOnClickListener {
+            mainViewModel.signOut()
+        }
+        //endregion
+
+        setupAdapterData()
+        setupView()
+
+        //welcome user
+        mainViewModel.getTheName()
+        mainViewModel.welcomeUser.observe(this) {
+            Log.d(TAG, "log welcome : $it")
+            Toast.makeText(this, "Welcome $it", Toast.LENGTH_SHORT).show()
+        }
+
+
+        //to user profile
         binding.apply {
             val getData = intent.getStringExtra(MAIN_EXTRA)
             cardViewMain.setOnClickListener {
@@ -63,99 +93,42 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            cvExit.setOnClickListener {
-                mainViewModel.signOut()
-            }
         }
 
-        //region observe the user and token
-        mainViewModel.getUser().observe(this) { user ->
-            //get the user
-            this.storyUser = user
-            //get the token
-            val token = user.userToken
-            Log.d(TAG, "check content token = ${user.userToken}")
-            //fix the blank if token is empty
-            if (token.isNotEmpty()){
-                mainViewModel.getListStories(token)
-            } else {
-                val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                startActivity(intent)
-                finishAffinity()
-            }
-        }
-        //endregion
-        setupAction()
-
-        //get userName still empty
-        mainViewModel.getUser().observe(this@MainActivity) {
-            this.storyUser = it
-            Log.d(TAG, "testingg ${it.userName}")
-        }
-
-        // region add new story
-        binding.apply {
-            fabMain.setOnClickListener {
-                val intent = Intent(this@MainActivity, AddNewStoryActivity::class.java)
-                startActivity(intent)
-                Log.d(TAG, "testing Fab")
-            }
-        }
-
-        //endregion
-    }
-
-    private fun setupAction() {
-        mainViewModel.isUserLogin().observe(this) { user ->
-            if (user.isUserLogin) {
-                //region welcomed the name
-                welcomedUser(user.userName)
-                //endregion
-                setupAdapter()
-                //setup userName
-                setupName()
-            } else {
-                val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
-
-    }
-
-    private fun welcomedUser(userN: String) {
-        mainViewModel.apply {
-            userName.observe(this@MainActivity) {
-                //set the welcome
-                val user = it.name
-                Log.d(TAG, "check the name: -> $user")
-                Toast.makeText(this@MainActivity, "Hello ${userN.toString()}", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    }
-
-    private fun setupName() {
-        val getData = intent.getStringExtra(MAIN_EXTRA)
-        if (getData != null && getData.isNotEmpty()){
-            binding.tvAppName.text = getData
-        } else {
-            binding.tvAppName.text = getString(R.string.hello_user)
-        }
-        Log.d(TAG, "testing to get Name $getData")
-    }
-
-    private fun setupAdapter() {
-        var storyAdapter = StoryAdapter()
-
-        mainViewModel.apply {
-            listStory.observe(this@MainActivity) {
-                //set the adapter
-                if (it != null) {
-                    val list = it.listStoryItems
-                    storyAdapter.submitList(list)
+        //region activityResult add new story
+        val newStoryLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    isUploaded = it.data?.getBooleanExtra(
+                        AddNewStoryActivity.ADD_NEW_STORY_EXTRA,
+                        false
+                    )
+                    if (isUploaded == true) {
+                        storyAdapter.refresh()
+                        binding.rvMain.smoothScrollToPosition(0)
+                    }
                 }
             }
+        //insyaalloh g crash
+        binding.fabMain.setOnClickListener {
+            newStoryLauncher.launch(Intent(this@MainActivity, AddNewStoryActivity::class.java))
+            Log.d(TAG, "testing Fab")
+        }
+        //endregion
+
+    }
+
+    private fun setupView() {
+        storyAdapter = StoryAdapter().apply {
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    if (positionStart == 0) {
+                        binding.rvMain.smoothScrollToPosition(0)
+                    }
+                }
+            })
         }
 
         binding.apply {
@@ -164,26 +137,49 @@ class MainActivity : AppCompatActivity() {
             rvMain.adapter = storyAdapter
         }
 
-        storyAdapter.onItemClickCallback = object : StoryAdapter.OnItemClickcallback {
-            override fun onItemClicked(name: ListStoryItems) {
-                //to detail activity
-                toDetailActivity(name)
+        storyAdapter.refresh()
+
+        wrapEspressoIdlingResource {
+            lifecycleScope.launch {
+                storyAdapter.loadStateFlow.collect {
+                    binding.progressMain.isVisible = it.refresh is LoadState.Loading
+                    if (it.refresh is LoadState.Error) {
+                        Snackbar.make(
+                            window.decorView.rootView,
+                            "Error when load stories",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
-
     }
 
+    private fun setupAdapterData() {
+        mainViewModel.listStories.observe(this) { pagingData ->
+            storyAdapter.submitData(lifecycle, pagingData)
 
-    private fun toDetailActivity(name: ListStoryItems) {
-        Intent(this, DetailsActivity::class.java).also {
-            it.putExtra(DetailsActivity.DETAILS_EXTRA, name)
-            startActivity(
-                it,
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity).toBundle()
+            //to details activity
+            storyAdapter.setOnItemClickCallBack(
+                object : StoryAdapter.OnItemClickCallback {
+                    override fun onItemClicked(itemClick: MainStory) {
+                        val detail = Intent(this@MainActivity, DetailsActivity::class.java)
+                        detail.putExtra(DetailsActivity.DETAILS_EXTRA, itemClick.id)
+                        startActivity(detail)
+                    }
+                }
             )
         }
+    }
 
-        Toast.makeText(this, "this ${name.name} status", Toast.LENGTH_SHORT).show()
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            binding.progressMain.visibility = View.VISIBLE
+            binding.rvMain.visibility = View.INVISIBLE
+        } else {
+            binding.progressMain.visibility = View.GONE
+            binding.rvMain.visibility = View.VISIBLE
+        }
     }
 
     override fun onBackPressed() {

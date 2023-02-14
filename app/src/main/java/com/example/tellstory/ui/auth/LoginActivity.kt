@@ -2,11 +2,9 @@ package com.example.tellstory.ui.auth
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -14,24 +12,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.tellstory.R
-import com.example.tellstory.common.UserDataPreferencesOld
 import com.example.tellstory.common.ViewModelFactories
-import com.example.tellstory.common.ViewModelFactory
-import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.ApiServiceOld
-import com.example.tellstory.coredata.remote.LoginResponseOld
 import com.example.tellstory.databinding.ActivityLoginBinding
 import com.example.tellstory.ui.main.MainActivity
 import com.example.tellstory.ui.viewmodel.LoginViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import javax.inject.Inject
 
 
 class LoginActivity : AppCompatActivity() {
@@ -51,14 +36,26 @@ class LoginActivity : AppCompatActivity() {
         setupView()
         playAnimation()
 
-        loginViewModel.getUser().observe(this) { user ->
-            this.storyUser = user
+        loginViewModel.isLogin.observe(this) {
+            if (it) {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finishAffinity()
+            }
+        }
+
+        loginViewModel.showLoading.observe(this) {
+            showLoading(it)
+        }
+
+        loginViewModel.showWelcome.observe(this) {
+            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
         }
 
 
         binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString().trim()
-            val pass = binding.etPass.text.toString().trim()
+            val email = binding.etEmail.text?.trim().toString()
+            val pass = binding.etPass.text?.trim().toString()
             when {
                 email.isEmpty() -> {
                     binding.etEmail.error = getString(R.string.empty_email)
@@ -67,9 +64,8 @@ class LoginActivity : AppCompatActivity() {
                     binding.etPass.error = getString(R.string.empty_password)
                 }
                 else -> {
-                    userLogin(email, pass)
-                    loginViewModel.userLogin()
-                    }
+                    loginViewModel.userLogin(email, pass)
+                }
                 }
             }
 
@@ -81,76 +77,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-    private fun userLogin(email: String, pass: String) {
-        showLoading(true)
-        val service = apiServiceOld.loginService(email, pass)
-
-        service.enqueue(object : Callback<LoginResponseOld> {
-            override fun onResponse(call: Call<LoginResponseOld>, response: Response<LoginResponseOld>) {
-                val body = response.body()
-                if (response.isSuccessful && body != null) {
-                    loginViewModel.userToken(
-                        StoryUser(
-                            storyUser.userEmail,
-                            body.loginResultOld.name,
-                            body.loginResultOld.token,
-                            storyUser.userPass,
-                            false
-                        )
-                    )
-
-                    val userWelCome = body.loginResultOld.name
-                    toMainActivity(userWelCome)
-                    Toast.makeText(
-                        this@LoginActivity,
-                        " Welcome $userWelCome",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                } else {
-                    showLoading(false)
-                    Log.d(TAG, "is login success? =  ${response.message()}")
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Invalid password or Email",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            override fun onFailure(call: Call<LoginResponseOld>, t: Throwable) {
-                showLoading(false)
-                Log.e(TAG, "onFailure: ${t.message}")
-                Toast.makeText(this@LoginActivity, "Internet Disconnected", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-        })
-    }
-
-    private fun toMainActivity(name: String) {
-        val getName = intent.getStringExtra(LOGIN_EXTRA) //from register
-        if (getName != null && getName.isNotEmpty()) {
-            Intent(this@LoginActivity, MainActivity::class.java).also {
-                it.putExtra(MainActivity.MAIN_EXTRA, name)
-                startActivity(it)
-                finish()
-            }
-        } else if (name.isEmpty()) {
-            Intent(this@LoginActivity, MainActivity::class.java).also {
-                it.putExtra(MainActivity.MAIN_EXTRA, getName)
-                startActivity(it)
-                finish()
-            }
-        } else {
-            Intent(this@LoginActivity, MainActivity::class.java).also {
-                it.putExtra(MainActivity.MAIN_EXTRA, name)
-                startActivity(it)
-                finish()
-            }
-        }
     }
 
     private fun showLoading(isLoading: Boolean) {

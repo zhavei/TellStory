@@ -2,44 +2,48 @@ package com.example.tellstory.ui.auth
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.tellstory.R
-import com.example.tellstory.common.UserDataPreferencesOld
-import com.example.tellstory.common.ViewModelFactory
-import com.example.tellstory.coredata.remote.ApiServiceOld
+import com.example.tellstory.common.ViewModelFactories
 import com.example.tellstory.databinding.ActivityRegisterBinding
 import com.example.tellstory.ui.viewmodel.RegisterViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
-private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
-
-@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var apiServiceOld: ApiServiceOld
     private val binding by lazy {
         ActivityRegisterBinding.inflate(layoutInflater)
     }
-    private val signUpViewModel: RegisterViewModel by viewModels {
-        ViewModelFactory(UserDataPreferencesOld.getInstance(userDataStore))
+    private val registerViewModel: RegisterViewModel by viewModels {
+        ViewModelFactories.getInstance(application)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         supportActionBar?.hide()
         playAnimation()
+
+        registerViewModel.loading.observe(this) {
+            showLoading(it)
+        }
+
+        registerViewModel.registerStatus.observe(this) { isRegistered ->
+            if (isRegistered) {
+                showConfirmationDialog(isRegistered)
+            }
+        }
+
+        registerViewModel.showError.observe(this) {
+            if (it) {
+                Toast.makeText(this, R.string.email_is_used, Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
         binding.btnregister.setOnClickListener {
@@ -56,7 +60,7 @@ class RegisterActivity : AppCompatActivity() {
                 pass.isEmpty() -> {
                     binding.etPass.error = getString(R.string.empty_password)
                 }
-                else -> register(name, email, pass)
+                else -> registerViewModel.newRegister(name, email, pass)
             }
         }
 
@@ -64,6 +68,7 @@ class RegisterActivity : AppCompatActivity() {
             tvTologin.setOnClickListener {
                 Intent(this@RegisterActivity, LoginActivity::class.java).also {
                     startActivity(it)
+                    finishAffinity()
                 }
             }
         }
@@ -71,22 +76,16 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
-    private fun register(name: String, email: String, pass: String) {
-        sendToLoginActivity(name) //send name from register
-
-        signUpViewModel.apply {
-            newRegister(name, email, pass)
-            loading.observe(this@RegisterActivity) {
-                showLoading(it)
-            }
-            statusMessage.observe(this@RegisterActivity) {
-                showStatus(it)
-            }
-            toastMessage.observe(this@RegisterActivity) {
-                Log.d(TAG, "testing toast $it")
-                Toast.makeText(this@RegisterActivity, it, Toast.LENGTH_SHORT).show()
+    private fun showConfirmationDialog(registered: Boolean) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Account Successfully Registered")
+        builder.setPositiveButton("Yes") { _, _ ->
+            if (registered) {
+                finish()
             }
         }
+        builder.show()
+
     }
 
     private fun showStatus(statusSuccess: Boolean) {

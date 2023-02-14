@@ -34,11 +34,11 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun observeLogin() {
-        viewModel.isLogin.observe(this) { isAuth ->
-            val activityClass = if (isAuth) MainActivity::class.java else LoginActivity::class.java
+        viewModel.isLogin.observe(this) { isUserAlreadyLogin ->
+            val activityClass = if (isUserAlreadyLogin) MainActivity::class.java else LoginActivity::class.java
             startActivity(Intent(this, activityClass))
             finish()
-            Log.d(TAG, "check the name:  $isAuth")
+            Log.d(TAG, "check the name:  $isUserAlreadyLogin")
         }
 
         viewModel.isUserLogin()

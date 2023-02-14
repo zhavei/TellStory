@@ -28,5 +28,6 @@
     <string name="language">Bahasa</string>
     <string name="change">ganti</string>
     <string name="signup">Daftar</string>
+    <string name="email_is_used">email is already Used</string>
 
 </resources>

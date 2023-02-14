@@ -1,10 +1,14 @@
 package com.example.tellstory.ui.detail
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.tellstory.common.ViewModelFactories
 import com.example.tellstory.coredata.remote.ListStoryItems
 import com.example.tellstory.databinding.ActivityDetailsBinding
+import com.example.tellstory.ui.viewmodel.DetailsViewModel
+import com.example.tellstory.ui.viewmodel.MainViewModel
 
 class DetailsActivity : AppCompatActivity() {
 
@@ -12,13 +16,20 @@ class DetailsActivity : AppCompatActivity() {
         ActivityDetailsBinding.inflate(layoutInflater)
     }
 
+    private val detailsViewModel: DetailsViewModel by viewModels {
+        ViewModelFactories.getInstance(application)
+    }
+
+    private var userId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val getData = intent.getParcelableExtra<ListStoryItems>(DETAILS_EXTRA)
+        val getData = intent.getStringExtra(DETAILS_EXTRA)
+
 
         binding.apply {
             tvNameDetail.text = getData?.name

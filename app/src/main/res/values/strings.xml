@@ -26,5 +26,6 @@
     <string name="language">Language</string>
     <string name="change">change</string>
     <string name="signup">Signup</string>
+    <string name="email_is_used">email is already Used</string>
 
 </resources>

@@ -1,64 +1,63 @@
 package com.example.tellstory.ui.viewmodel
 
-import androidx.lifecycle.*
-import com.example.tellstory.common.UserDataPreferencesOld
-import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.ApiConfigOld
-import com.example.tellstory.coredata.remote.GetAllStoriesResponseOld
-import com.example.tellstory.coredata.remote.ListStoryItems
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.tellstory.coredata.model.MainStory
+import com.example.tellstory.repository.TellStoryRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class MainViewModel(private val preferences: UserDataPreferencesOld) : ViewModel() {
+class MainViewModel(private val tellStoryRepository: TellStoryRepository) : ViewModel() {
 
+    //get the paging data
+    val listStories: LiveData<PagingData<MainStory>> =
+        tellStoryRepository.fetchAllStories().cachedIn(viewModelScope)
 
-    private var _listStory = MutableLiveData<GetAllStoriesResponseOld>()
-    val listStory: LiveData<GetAllStoriesResponseOld> get() = _listStory
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean> get() = _loading
 
-    //are these work?
-    private var _userName = MutableLiveData<ListStoryItems>()
-    val userName: LiveData<ListStoryItems> get() = _userName
+    private val _signOut = MutableLiveData<Boolean>()
+    val signOut: LiveData<Boolean> get() = _signOut
 
-    fun isUserLogin(): LiveData<StoryUser> {
-        return preferences.getUserStory().asLiveData()
-    }
+    private val _welcomeUser = MutableLiveData<String>()
+    val welcomeUser: LiveData<String> = _welcomeUser
 
-    //to get the user token
-    fun getUser(): LiveData<StoryUser> {
-        return preferences.getUserStory().asLiveData()
-    }
-
-
-    fun signOut() {
+    fun getTheName() {
         viewModelScope.launch {
-            preferences.logOutUser()
+            //get the username
+            val user = tellStoryRepository.observeUserName()
+            _welcomeUser.value = user.toString()
+            Log.d("Main viewModel", user.toString())
         }
     }
 
-    fun getListStories(token: String) {
-        val apiService = ApiConfigOld.getApiService().getAllStoriesService(BEARER + token)
-        apiService.enqueue(object : Callback<GetAllStoriesResponseOld> {
-            override fun onResponse(
-                call: Call<GetAllStoriesResponseOld>,
-                response: Response<GetAllStoriesResponseOld>
-            ) {
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    _listStory.postValue(body!!)
+    fun signOut() {
+        _loading.value = true
+
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val result = tellStoryRepository.logout()
+                if (result) {
+                    _loading.value = false
+                    _signOut.value = true
+                } else {
+                    _loading.value = false
                 }
+            } catch (e: Exception) {
+                _loading.value = false
+                Log.e(TAG, "Error while signing out: ${e.message}")
             }
-
-            override fun onFailure(call: Call<GetAllStoriesResponseOld>, t: Throwable) {
-                t.printStackTrace()
-            }
-
-        })
+        }
     }
 
+
     companion object {
-        private val BEARER = "Bearer "
+        private const val TAG = "MainViewModel"
     }
 
 }

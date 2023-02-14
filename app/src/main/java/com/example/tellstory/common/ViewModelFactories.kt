@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.tellstory.di.AppInjection
 import com.example.tellstory.repository.TellStoryRepository
-import com.example.tellstory.ui.viewmodel.AddNewStoryViewModel
-import com.example.tellstory.ui.viewmodel.LoginViewModel
-import com.example.tellstory.ui.viewmodel.MainViewModel
-import com.example.tellstory.ui.viewmodel.RegisterViewModel
+import com.example.tellstory.ui.viewmodel.*
 
 class ViewModelFactories (
     private val storyRepository: TellStoryRepository): ViewModelProvider.NewInstanceFactory() {
@@ -38,7 +35,8 @@ class ViewModelFactories (
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(storyRepository) as T
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> RegisterViewModel(storyRepository) as T
             modelClass.isAssignableFrom(AddNewStoryViewModel::class.java) -> AddNewStoryViewModel(storyRepository) as T
-            else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
+            modelClass.isAssignableFrom(DetailsViewModel::class.java) -> DetailsViewModel(storyRepository) as T
+            else -> throw IllegalArgumentException("Unrecognized ViewModel class: " + modelClass.name)
         }
     }
 }

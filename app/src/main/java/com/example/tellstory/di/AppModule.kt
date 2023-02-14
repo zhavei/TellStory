@@ -1,10 +1,6 @@
 package com.example.tellstory.di
 
-import android.content.Context
 import com.example.tellstory.BuildConfig
-import com.example.tellstory.common.UserDataPreferences
-import com.example.tellstory.coredata.local.TellStoryDatabase
-import com.example.tellstory.coredata.remote.ApiConfig
 import com.example.tellstory.coredata.remote.ApiServiceOld
 import dagger.Module
 import dagger.Provides

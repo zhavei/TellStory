@@ -25,6 +25,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.tellstory.R
 import com.example.tellstory.common.*
 import com.example.tellstory.databinding.ActivityAddNewStoryBinding
+import com.example.tellstory.ui.main.MainActivity
 import com.example.tellstory.ui.viewmodel.AddNewStoryViewModel
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -50,6 +51,9 @@ class AddNewStoryActivity : AppCompatActivity() {
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
+
+        private val TAG = AddNewStoryActivity::class.java.simpleName
+        const val ADD_NEW_STORY_EXTRA = "Add_New_Story_Activity"
     }
 
     override fun onRequestPermissionsResult(
@@ -236,4 +240,6 @@ class AddNewStoryActivity : AppCompatActivity() {
         }
         supportActionBar?.hide()
     }
+
+
 }
