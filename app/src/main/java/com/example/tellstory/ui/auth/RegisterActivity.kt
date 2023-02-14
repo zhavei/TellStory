@@ -14,9 +14,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.tellstory.R
-import com.example.tellstory.common.UserDataPreferences
+import com.example.tellstory.common.UserDataPreferencesOld
 import com.example.tellstory.common.ViewModelFactory
-import com.example.tellstory.coredata.remote.ApiService
+import com.example.tellstory.coredata.remote.ApiServiceOld
 import com.example.tellstory.databinding.ActivityRegisterBinding
 import com.example.tellstory.ui.viewmodel.RegisterViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,12 +28,12 @@ private val Context.userDataStore: DataStore<Preferences> by preferencesDataStor
 class RegisterActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var apiService: ApiService
+    lateinit var apiServiceOld: ApiServiceOld
     private val binding by lazy {
         ActivityRegisterBinding.inflate(layoutInflater)
     }
     private val signUpViewModel: RegisterViewModel by viewModels {
-        ViewModelFactory(UserDataPreferences.getInstance(userDataStore))
+        ViewModelFactory(UserDataPreferencesOld.getInstance(userDataStore))
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

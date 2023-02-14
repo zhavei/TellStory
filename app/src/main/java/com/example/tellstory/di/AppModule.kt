@@ -1,7 +1,11 @@
 package com.example.tellstory.di
 
+import android.content.Context
 import com.example.tellstory.BuildConfig
-import com.example.tellstory.coredata.remote.ApiService
+import com.example.tellstory.common.UserDataPreferences
+import com.example.tellstory.coredata.local.TellStoryDatabase
+import com.example.tellstory.coredata.remote.ApiConfig
+import com.example.tellstory.coredata.remote.ApiServiceOld
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,8 +53,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideApi(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
+    fun provideApi(retrofit: Retrofit): ApiServiceOld {
+        return retrofit.create(ApiServiceOld::class.java)
     }
 
 }

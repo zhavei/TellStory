@@ -18,11 +18,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.tellstory.R
-import com.example.tellstory.common.UserDataPreferences
+import com.example.tellstory.common.UserDataPreferencesOld
+import com.example.tellstory.common.ViewModelFactories
 import com.example.tellstory.common.ViewModelFactory
 import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.ApiService
-import com.example.tellstory.coredata.remote.LoginResponse
+import com.example.tellstory.coredata.remote.ApiServiceOld
+import com.example.tellstory.coredata.remote.LoginResponseOld
 import com.example.tellstory.databinding.ActivityLoginBinding
 import com.example.tellstory.ui.main.MainActivity
 import com.example.tellstory.ui.viewmodel.LoginViewModel
@@ -32,18 +33,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
-@AndroidEntryPoint
+
 class LoginActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var apiService: ApiService
-    private lateinit var storyUser: StoryUser
+
     private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
     private val loginViewModel: LoginViewModel by viewModels {
-        ViewModelFactory(UserDataPreferences.getInstance(userDataStore))
+        ViewModelFactories.getInstance(application)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,23 +85,23 @@ class LoginActivity : AppCompatActivity() {
 
     private fun userLogin(email: String, pass: String) {
         showLoading(true)
-        val service = apiService.loginService(email, pass)
+        val service = apiServiceOld.loginService(email, pass)
 
-        service.enqueue(object : Callback<LoginResponse> {
-            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+        service.enqueue(object : Callback<LoginResponseOld> {
+            override fun onResponse(call: Call<LoginResponseOld>, response: Response<LoginResponseOld>) {
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
                     loginViewModel.userToken(
                         StoryUser(
                             storyUser.userEmail,
-                            body.loginResult.name,
-                            body.loginResult.token,
+                            body.loginResultOld.name,
+                            body.loginResultOld.token,
                             storyUser.userPass,
                             false
                         )
                     )
 
-                    val userWelCome = body.loginResult.name
+                    val userWelCome = body.loginResultOld.name
                     toMainActivity(userWelCome)
                     Toast.makeText(
                         this@LoginActivity,
@@ -122,7 +120,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+            override fun onFailure(call: Call<LoginResponseOld>, t: Throwable) {
                 showLoading(false)
                 Log.e(TAG, "onFailure: ${t.message}")
                 Toast.makeText(this@LoginActivity, "Internet Disconnected", Toast.LENGTH_SHORT)

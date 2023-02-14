@@ -40,7 +40,7 @@ class AddNewStoryActivity : AppCompatActivity() {
     }
 
     private val addNewStoryViewModel: AddNewStoryViewModel by viewModels() {
-        ViewModelFactory(UserDataPreferences.getInstance(userDataStore))
+        ViewModelFactory(UserDataPreferencesOld.getInstance(userDataStore))
     }
 
     private lateinit var currentPhotoPath: String

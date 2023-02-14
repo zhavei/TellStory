@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tellstory.common.UserDataPreferences
+import com.example.tellstory.common.UserDataPreferencesOld
 import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.ApiConfig
+import com.example.tellstory.coredata.remote.ApiConfigOld
 import com.example.tellstory.coredata.remote.RegisterResponse
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -16,7 +16,7 @@ import retrofit2.Response
 
 
 class RegisterViewModel (
-    private val preferences: UserDataPreferences
+    private val preferences: UserDataPreferencesOld
 ) : ViewModel() {
 
     fun saveNewAuth(user: StoryUser) {
@@ -37,7 +37,7 @@ class RegisterViewModel (
     fun newRegister(name: String, email: String, pass: String) {
         _loading.value = true
 
-        val registerService = ApiConfig.getApiService().registerService(name, email, pass)
+        val registerService = ApiConfigOld.getApiService().registerService(name, email, pass)
 
         registerService.enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(

@@ -4,14 +4,14 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-data class LoginResponse(
+data class LoginResponseOld(
 
     @field:SerializedName("error") val error: Boolean,
     @field:SerializedName("message") val message: String,
-    @field:SerializedName("loginResult") val loginResult: LoginResult,
+    @field:SerializedName("loginResultOld") val loginResultOld: LoginResultOld,
 )
 
-data class LoginResult(
+data class LoginResultOld(
 
     @field:SerializedName("userId") val userId: String,
     @field:SerializedName("name") val name: String,
@@ -28,7 +28,7 @@ data class AddNewStoryResponse(
     @field:SerializedName("message") val message: String
 )
 
-data class GetAllStoriResponse(
+data class GetAllStoriesResponseOld(
     @field:SerializedName("error") val error: Boolean,
     @field:SerializedName("message") val message: String,
     @field:SerializedName("listStory") val listStoryItems: List<ListStoryItems>

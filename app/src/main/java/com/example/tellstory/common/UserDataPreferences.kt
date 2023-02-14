@@ -2,67 +2,52 @@ package com.example.tellstory.common
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.tellstory.coredata.model.StoryUser
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 
-class UserDataPreferences private constructor(private val userDataStore: DataStore<Preferences>) {
+class UserDataPreferences private constructor(private val userData: DataStore<Preferences>) {
 
-    fun getUserStory(): Flow<StoryUser> {
-        return userDataStore.data.map { getuser ->
-            StoryUser(
-                getuser[KEY_USER_EMAIL] ?: "",
-                getuser[KEY_USER_NAME] ?: "",
-                getuser[KEY_USER_TOKEN] ?: "",
-                getuser[KEY_USER_PASS] ?: "",
-                getuser[KEY_IS_LOGIN] ?: false,
-            )
-
+    suspend fun storeUserName(name: String?) {
+        userData.edit { userName ->
+            if (name != null) {
+                userName[USER_NAME] = name
+            }
         }
     }
 
-    suspend fun saveUser(user: StoryUser) {
-        userDataStore.edit { saveUser ->
-            saveUser[KEY_USER_EMAIL] = user.userEmail
-            saveUser[KEY_USER_NAME] = user.userName
-            saveUser[KEY_USER_PASS] = user.userPass
-            saveUser[KEY_IS_LOGIN] = user.isUserLogin
+    suspend fun getUserName(): String? {
+        val user = userData.data.first().get(USER_NAME)
+        return if (user.isNullOrEmpty()) null else user
+    }
+
+
+    suspend fun storeToken(token: String?) {
+        userData.edit { preferences ->
+            if (token != null) {
+                preferences[USER_TOKEN] = token
+            }
         }
     }
 
-    suspend fun login() {
-        userDataStore.edit { userLogin ->
-            userLogin[KEY_IS_LOGIN] = true
-        }
+    suspend fun getToken(): String? {
+        val token = userData.data.first().get(USER_TOKEN)
+        return if (token.isNullOrEmpty()) null else token
     }
 
-    suspend fun logOutUser() {
-        userDataStore.edit { logOutUser ->
-            logOutUser[KEY_IS_LOGIN] = false
-            logOutUser[KEY_USER_NAME] = ""
-            logOutUser[KEY_USER_PASS] = ""
-            logOutUser[KEY_USER_EMAIL] = ""
-            logOutUser[KEY_USER_TOKEN] = ""
-        }
-    }
-
-    suspend fun userToken(user: StoryUser) {
-        userDataStore.edit { userToken ->
-            userToken[KEY_USER_TOKEN] = user.userToken
+    suspend fun clearToken(token: String?) {
+        userData.edit { preference ->
+            preference[USER_TOKEN] = token ?: ""
+            preference[USER_NAME] = token ?: ""
         }
     }
 
     companion object {
         @Volatile
         private var INSTANCE: UserDataPreferences? = null
-        val KEY_IS_LOGIN = booleanPreferencesKey("user_state")
-        val KEY_USER_NAME = stringPreferencesKey("user_name")
-        val KEY_USER_TOKEN = stringPreferencesKey("user_token")
-        val KEY_USER_EMAIL = stringPreferencesKey("user_email")
-        val KEY_USER_PASS = stringPreferencesKey("user_pass")
+
+        private val USER_TOKEN = stringPreferencesKey("user_token")
+        private val USER_NAME = stringPreferencesKey("user_name")
 
         fun getInstance(dataStore: DataStore<Preferences>): UserDataPreferences {
             return INSTANCE ?: synchronized(this) {
@@ -70,9 +55,7 @@ class UserDataPreferences private constructor(private val userDataStore: DataSto
                 INSTANCE = instance
                 instance
             }
-
         }
-
     }
 
 }

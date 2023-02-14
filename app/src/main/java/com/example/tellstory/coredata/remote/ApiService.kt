@@ -3,38 +3,46 @@ package com.example.tellstory.coredata.remote
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
 
-    @FormUrlEncoded
     @POST("login")
-    fun loginService(
-        @Field("email") email: String,
-        @Field("password") password: String
-    ): Call<LoginResponse>
+    suspend fun loginService(
+        @Body loginRequestBody: LoginRequestBody
+    ): Response<LoginResponse>
 
 
-    @FormUrlEncoded
     @POST("register")
-    fun registerService(
-        @Field("name") name: String,
-        @Field("email") email: String,
-        @Field("password") password: String
-    ): Call<RegisterResponse>
-
-    @GET("stories")
-    fun getAllStoriesService(
-        @Header("Authorization") token: String,
-    ): Call<GetAllStoriResponse>
+    suspend fun registerService(
+        @Body registerRequestBody: RegisterRequestBody
+    ): Response<MainResponse>
 
 
     @Multipart
     @POST("stories")
-    fun addNewStoryService(
+    suspend fun addNewStoryService(
         @Header("Authorization") token: String,
-        @Part file: MultipartBody.Part,
-        @Part("description") description: RequestBody
-    ): Call<AddNewStoryResponse>
+        @Part("description") desc: RequestBody,
+        @Part("lat") lat: Float? = null,
+        @Part("lon") lon: Float? = null,
+        @Part file: MultipartBody.Part
+    ): Response<MainResponse>
+
+
+    @GET("stories")
+    suspend fun listStories(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 10,
+        @Query("location") location: Int = 0
+    ): Response<GetAllStoriesResponse>
+
+    @GET("stories/{id}")
+    suspend fun detailStory(
+        @Header("Authorization") token: String,
+        @Path("id") userId: String,
+    ): Response<DetailsStory>
 
 }

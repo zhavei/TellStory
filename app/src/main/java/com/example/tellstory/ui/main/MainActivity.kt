@@ -15,7 +15,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.tellstory.R
-import com.example.tellstory.common.UserDataPreferences
+import com.example.tellstory.common.UserDataPreferencesOld
 import com.example.tellstory.common.ViewModelFactory
 import com.example.tellstory.coredata.model.StoryUser
 import com.example.tellstory.coredata.remote.ListStoryItems
@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val mainViewModel: MainViewModel by viewModels {
-        ViewModelFactory(UserDataPreferences.getInstance(userDataStore))
+        ViewModelFactory(UserDataPreferencesOld.getInstance(userDataStore))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
