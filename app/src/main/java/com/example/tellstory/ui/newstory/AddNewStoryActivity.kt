@@ -1,7 +1,6 @@
 package com.example.tellstory.ui.newstory
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -13,27 +12,24 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.tellstory.R
 import com.example.tellstory.common.*
 import com.example.tellstory.databinding.ActivityAddNewStoryBinding
-import com.example.tellstory.ui.main.MainActivity
 import com.example.tellstory.ui.viewmodel.AddNewStoryViewModel
+import com.google.android.gms.maps.model.LatLng
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
 class AddNewStoryActivity : AppCompatActivity() {
 
     private val binding by lazy {
@@ -41,19 +37,22 @@ class AddNewStoryActivity : AppCompatActivity() {
     }
 
     private val addNewStoryViewModel: AddNewStoryViewModel by viewModels() {
-        ViewModelFactory(UserDataPreferencesOld.getInstance(userDataStore))
+        ViewModelFactories.getInstance(application)
     }
 
-    private lateinit var currentPhotoPath: String
-    private var getFile: File? = null
-    private var token: String? = null
+    private var selectedPhotoFile: File? = null
+    private var selectedPhotoFilePath: String? = null
+    private var isStoryUploaded: Boolean = false
+    private var selectedLocationLatLng: LatLng? = null
+    private var shouldProvideLocation: Boolean = false
+
 
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
 
         private val TAG = AddNewStoryActivity::class.java.simpleName
-        const val ADD_NEW_STORY_EXTRA = "Add_New_Story_Activity"
+        const val ADD_NEW_STORY_EXTRA_UPLOADED = "Add_New_Story_Activity"
     }
 
     override fun onRequestPermissionsResult(
@@ -91,15 +90,38 @@ class AddNewStoryActivity : AppCompatActivity() {
             )
         }
 
-        binding.btnCamera.setOnClickListener {
-            startCamera()
+        addNewStoryViewModel.apply {
+            loadingStatus.observe(this@AddNewStoryActivity) {
+                showLoading(it)
+            }
+            responseMessage.observe(this@AddNewStoryActivity) {
+                Toast.makeText(this@AddNewStoryActivity, it, Toast.LENGTH_SHORT).show()
+            }
+            statusUploaded.observe(this@AddNewStoryActivity) {
+                binding.etDescription.text?.clear()
+                binding.imageViewHolder.setImageURI(null)
+                binding.imageViewHolder.setImageBitmap(null)
+                isStoryUploaded = true
+                onBackPressedCallback.handleOnBackPressed()
+            }
         }
-        binding.btnGalery.setOnClickListener {
-            startGalery()
+
+        //add new story process
+        binding.apply {
+            btnCamera.setOnClickListener {
+                startCamera()
+            }
+            btnGalery.setOnClickListener {
+                startGalery()
+            }
+            btnPost.setOnClickListener {
+                postNewStory()
+            }
+
+
+
         }
-        binding.btnPost.setOnClickListener {
-            postNewStory()
-        }
+
 
     }
 
@@ -239,6 +261,14 @@ class AddNewStoryActivity : AppCompatActivity() {
             )
         }
         supportActionBar?.hide()
+    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            intent.putExtra(ADD_NEW_STORY_EXTRA_UPLOADED, isStoryUploaded)
+            setResult(RESULT_OK, intent)
+            finish()
+        }
     }
 
 

@@ -1,69 +1,63 @@
 package com.example.tellstory.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import com.example.tellstory.common.UserDataPreferencesOld
-import com.example.tellstory.coredata.model.StoryUser
-import com.example.tellstory.coredata.remote.AddNewStoryResponse
-import com.example.tellstory.coredata.remote.ApiConfigOld
+import androidx.lifecycle.viewModelScope
+import com.example.tellstory.coredata.remote.AddNewStoryRequest
+import com.example.tellstory.repository.TellStoryRepository
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 
 class AddNewStoryViewModel(
-    private val preferences: UserDataPreferencesOld,
+    private val repository: TellStoryRepository,
 ) : ViewModel() {
 
-    fun getUser(): LiveData<StoryUser> {
-        return preferences.getUserStory().asLiveData()
-    }
+    private val _loadingStatus = MutableLiveData<Boolean>()
+    val loadingStatus: LiveData<Boolean> = _loadingStatus
 
-    private var _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> get() = _loading
+    private var _statusUploaded = MutableLiveData<Boolean>()
+    val statusUploaded: LiveData<Boolean> get() = _statusUploaded
 
-    private var _status = MutableLiveData<Boolean>()
-    val status: LiveData<Boolean> get() = _status
-
-    private var _respones = MutableLiveData<String>()
-    val responses: LiveData<String> get() = _respones
+    private var _responseMessage = MutableLiveData<String>()
+    val responseMessage: LiveData<String> get() = _responseMessage
 
 
-    fun postNewStory(file: MultipartBody.Part, description: RequestBody, token: String) {
-        _loading.value = true
-        val requestService =
-            ApiConfigOld.getApiService().addNewStoryService(BEARER + token, file, description)
-        requestService.enqueue(object : Callback<AddNewStoryResponse> {
-            override fun onResponse(
-                call: Call<AddNewStoryResponse>,
-                response: Response<AddNewStoryResponse>
-            ) {
-                if (response.isSuccessful) {
-                    _loading.value = false
-                    _status.value = true
-                    val body = response.body()
-                    if (body != null && body.error) {
-                        _respones.postValue(RESPONE_MESSAGE + body.message)
-                    } else {
-                        _respones.postValue(RESPONE_MESSAGE + body?.message)
-                    }
+    fun postNewStory(file: File, lat: Float?, lon: Float?, desc: String) {
+        _loadingStatus.postValue(true)
+        val requestData = AddNewStoryRequest(
+            desc, lat, lon
+        )
+        val imageType = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val image = MultipartBody.Part.createFormData("image", file.name, imageType)
+
+        viewModelScope.launch {
+            runCatching {
+                val data = repository.addNewStory(requestData, image)
+                if (data) {
+                    _statusUploaded.postValue(true)
+                    "New Story Added Successfully"
+                } else {
+                    "Upload Failed"
                 }
+            }.onSuccess {
+                _loadingStatus.postValue(false)
+                _responseMessage.postValue(it)
+                Log.d(TAG, "postNewStory: $it")
+            }.onFailure {
+                _loadingStatus.postValue(false)
+                _responseMessage.postValue("${it.message}")
             }
-
-            override fun onFailure(call: Call<AddNewStoryResponse>, t: Throwable) {
-                _loading.value = false
-                _status.value = false
-            }
-        })
+        }
     }
 
     companion object {
-        private val BEARER = "Bearer "
-        private val RESPONE_MESSAGE = "New "
+        private val TAG = AddNewStoryViewModel::class.simpleName
     }
 
 }

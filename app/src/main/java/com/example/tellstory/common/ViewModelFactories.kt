@@ -12,19 +12,19 @@ class ViewModelFactories (
 
     companion object {
         @Volatile
-        private var instance: ViewModelFactory? = null
+        private var instance: ViewModelFactories? = null
 
         @JvmStatic
-        fun getInstance(context: Context): ViewModelFactory {
+        fun getInstance(context: Context): ViewModelFactories {
             if (instance == null) {
-                synchronized(ViewModelFactory::class.java) {
-                    instance = ViewModelFactory(
+                synchronized(ViewModelFactories::class.java) {
+                    instance = ViewModelFactories(
                         AppInjection.provideStoryRepository(context)
                     )
                 }
             }
 
-            return instance as ViewModelFactory
+            return instance as ViewModelFactories
         }
     }
 
@@ -36,6 +36,7 @@ class ViewModelFactories (
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> RegisterViewModel(storyRepository) as T
             modelClass.isAssignableFrom(AddNewStoryViewModel::class.java) -> AddNewStoryViewModel(storyRepository) as T
             modelClass.isAssignableFrom(DetailsViewModel::class.java) -> DetailsViewModel(storyRepository) as T
+            modelClass.isAssignableFrom(SplashViewModel::class.java) -> SplashViewModel(storyRepository) as T
             else -> throw IllegalArgumentException("Unrecognized ViewModel class: " + modelClass.name)
         }
     }

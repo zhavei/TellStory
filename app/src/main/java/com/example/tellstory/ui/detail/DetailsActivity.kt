@@ -32,10 +32,12 @@ class DetailsActivity : AppCompatActivity() {
         storyId = intent.getStringExtra(DETAILS_EXTRA)
         Log.d(TAG, "check user ID: $storyId")
 
+        //region check status
         loadingStatus()
-        detailsViewModel.statusMessage.observe(this) {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        detailsViewModel.statusMessage.observe(this) { statusMessageError ->
+            Toast.makeText(this, statusMessageError, Toast.LENGTH_SHORT).show()
         }
+        //endregion
 
         setData()
         storyId?.let { detailsViewModel.fetchStoryDetails(it) }
