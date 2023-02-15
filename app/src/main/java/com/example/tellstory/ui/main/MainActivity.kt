@@ -134,7 +134,11 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             rvMain.layoutManager = GridLayoutManager(this@MainActivity, 2)
             rvMain.setHasFixedSize(true)
-            rvMain.adapter = storyAdapter
+            rvMain.adapter = storyAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    storyAdapter.retry()
+                }
+            )
         }
 
         storyAdapter.refresh()

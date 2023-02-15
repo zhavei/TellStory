@@ -27,5 +27,6 @@
     <string name="change">change</string>
     <string name="signup">Signup</string>
     <string name="email_is_used">email is already Used</string>
+    <string name="retry">retry</string>
 
 </resources>
