@@ -22,6 +22,7 @@ import androidx.core.content.FileProvider
 import com.example.tellstory.R
 import com.example.tellstory.common.*
 import com.example.tellstory.databinding.ActivityAddNewStoryBinding
+import com.example.tellstory.ui.MapsActivity
 import com.example.tellstory.ui.viewmodel.AddNewStoryViewModel
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.MediaType.Companion.toMediaType
@@ -118,10 +119,27 @@ class AddNewStoryActivity : AppCompatActivity() {
                 postNewStory()
             }
 
+            binding.ivPickLocation.setOnClickListener {
+                shouldProvideLocation = !shouldProvideLocation
+                if (shouldProvideLocation) {
+                    val intent = Intent(this@AddNewStoryActivity, MapsActivity::class.java)
+                    intent.putExtra(MapsActivity.MAPS_EXTRA, true)
+                    locationLauncher.launch(intent)
+                } else {
+                    selectedLocationLatLng = null
+                    with(binding) {
+                        etPickLocation.text = null
+                    }
+                }
+                /**
+                 * baru sampe sini oke
+                 */
 
+            }
 
         }
 
+        this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
     }
 
@@ -227,6 +245,20 @@ class AddNewStoryActivity : AppCompatActivity() {
             binding.imageViewHolder.setImageBitmap(rotate)
         }
     }
+
+    private val locationLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                val locationDataMarker =
+                    it.data?.extras?.getParcelable(MapsActivity.MAPS_LOCATION) as LatLng?
+                val locationAddress =
+                    it.data?.extras?.getString(MapsActivity.MAPS_ADDRESS)
+                if (locationDataMarker != null) {
+                    selectedLocationLatLng = locationDataMarker
+                    binding.etPickLocation.setText(locationAddress)
+                }
+            }
+        }
 
     private fun showStatus(statusSuccess: Boolean) {
         if (statusSuccess) {
