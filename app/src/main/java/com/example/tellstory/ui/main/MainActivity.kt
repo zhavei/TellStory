@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == RESULT_OK) {
                     isUploaded = it.data?.getBooleanExtra(
-                        AddNewStoryActivity.ADD_NEW_STORY_EXTRA,
+                        AddNewStoryActivity.IS_NEW_STORY_EXTRA_UPLOADED,
                         false
                     )
                     if (isUploaded == true) {
@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
                 object : StoryAdapter.OnItemClickCallback {
                     override fun onItemClicked(itemClick: MainStory) {
                         val detail = Intent(this@MainActivity, DetailsActivity::class.java)
-                        detail.putExtra(DetailsActivity.DETAILS_EXTRA, itemClick.id)
+                        detail.putExtra(DetailsActivity.DETAILS_EXTRA_WITH_ID, itemClick.id)
                         startActivity(detail)
                     }
                 }

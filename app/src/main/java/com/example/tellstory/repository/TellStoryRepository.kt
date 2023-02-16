@@ -143,40 +143,37 @@ class TellStoryRepository private constructor(
 
 
     //stories in gmaps
-    /*suspend fun getAllStoriesMap(): List<Story> {
-        val stories = mutableListOf<Story>()
-        withContext(Dispatchers.IO) {
+    suspend fun getMapsStories(): List<MainStory> {
+        return withContext(Dispatchers.IO) {
             try {
                 val userToken = pref.getToken()
                 val bearerToken = "Bearer $userToken"
-                val response = apiServices.getAllStories(
-                    authToken = bearerToken,
+                val response = apiService.listStories(
+                    bearerToken,
                     page = 1,
                     size = 100,
                     location = 1
                 )
                 if (response.isSuccessful) {
-                    response.body()?.listStory?.forEach {
-                        stories.add(
-                            Story(
-                                id = it.id,
-                                name = it.name,
-                                description = it.description,
-                                photoUrl = it.photoUrl,
-                                createdAt = it.createdAt,
-                                lat = it.lat,
-                                lon = it.lon
-                            )
+                    response.body()?.listStory?.map {
+                        MainStory(
+                            id = it.id,
+                            name = it.name,
+                            description = it.description,
+                            photoUrl = it.photoUrl,
+                            createdAt = it.createdAt,
+                            lat = it.lat,
+                            lon = it.lon
                         )
-
-                    }
+                    } ?: emptyList()
+                } else {
+                    emptyList()
                 }
             } catch (e: Throwable) {
                 throw Exception(e.message.toString())
             }
         }
-        return stories
-    }*/
+    }
 
 
     companion object {

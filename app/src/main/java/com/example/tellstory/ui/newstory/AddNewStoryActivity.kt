@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -22,13 +23,9 @@ import androidx.core.content.FileProvider
 import com.example.tellstory.R
 import com.example.tellstory.common.*
 import com.example.tellstory.databinding.ActivityAddNewStoryBinding
-import com.example.tellstory.ui.MapsActivity
+import com.example.tellstory.ui.maps.MapsActivity
 import com.example.tellstory.ui.viewmodel.AddNewStoryViewModel
 import com.google.android.gms.maps.model.LatLng
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 class AddNewStoryActivity : AppCompatActivity() {
@@ -53,7 +50,7 @@ class AddNewStoryActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
 
         private val TAG = AddNewStoryActivity::class.java.simpleName
-        const val ADD_NEW_STORY_EXTRA_UPLOADED = "Add_New_Story_Activity"
+        const val IS_NEW_STORY_EXTRA_UPLOADED = "Add_New_Story_Activity"
     }
 
     override fun onRequestPermissionsResult(
@@ -110,10 +107,10 @@ class AddNewStoryActivity : AppCompatActivity() {
         //add new story process
         binding.apply {
             btnCamera.setOnClickListener {
-                startCamera()
+                openCamera()
             }
             btnGalery.setOnClickListener {
-                startGalery()
+                openGallery()
             }
             btnPost.setOnClickListener {
                 postNewStory()
@@ -123,18 +120,21 @@ class AddNewStoryActivity : AppCompatActivity() {
                 shouldProvideLocation = !shouldProvideLocation
                 if (shouldProvideLocation) {
                     val intent = Intent(this@AddNewStoryActivity, MapsActivity::class.java)
-                    intent.putExtra(MapsActivity.MAPS_EXTRA, true)
+                    intent.putExtra(MapsActivity.MAPS_PICKED_LATLON, true)
                     locationLauncher.launch(intent)
+                    binding.ivCloseLocation.visibility = View.VISIBLE
                 } else {
                     selectedLocationLatLng = null
                     with(binding) {
                         etPickLocation.text = null
                     }
                 }
-                /**
-                 * baru sampe sini oke
-                 */
-
+            }
+            binding.ivCloseLocation.setOnClickListener {
+                selectedLocationLatLng = null
+                with(binding) {
+                    etPickLocation.text = null
+                }
             }
 
         }
@@ -145,57 +145,22 @@ class AddNewStoryActivity : AppCompatActivity() {
 
     private fun postNewStory() {
         binding.apply {
-            val description = etDescription.text
-            when {
-                description.isEmpty() -> {
-                    etDescription.error = getString(R.string.empty_desc)
-                }
-                getFile == null -> {
-                    Toast.makeText(
-                        this@AddNewStoryActivity,
-                        getString(R.string.take_your_picture),
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
-                else -> {
-                    val description =
-                        binding.etDescription.text.toString()
-                            .toRequestBody("text/plain".toMediaType())
-                    val reduceFile = reduceFileImage(getFile as File)
-                    val imageFile = reduceFile.asRequestBody()
-                    val multiPart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                        "photo",
-                        reduceFile.name,
-                        imageFile
-                    )
-
-                    //region post to it
-
-                    addNewStoryViewModel.apply {
-                        getUser().observe(this@AddNewStoryActivity) { user ->
-                            token = user.userToken
-                        }
-                        token?.let { postNewStory(multiPart, description, it) }
-
-                        loading.observe(this@AddNewStoryActivity) { show ->
-                            showLoading(show)
-                        }
-                        status.observe(this@AddNewStoryActivity) { success ->
-                            showStatus(success)
-                        }
-                        responses.observe(this@AddNewStoryActivity) { getRespone ->
-                            showRespones(getRespone)
-                        }
-                    }
-                    //endregion
-                }
+            if (etDescription.text.isNullOrEmpty() || selectedPhotoFile == null) {
+                etDescription.error = getString(R.string.empty_desc)
+                return
             }
+            val reducedImage = reduceFileImage(selectedPhotoFile!!)
+            addNewStoryViewModel.postNewStory(
+                file = reducedImage,
+                lat = selectedLocationLatLng?.latitude?.toFloat(),
+                lon = selectedLocationLatLng?.longitude?.toFloat(),
+                desc = etDescription.text?.trim().toString()
+            )
         }
     }
 
 
-    private fun startCamera() {
+    private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.resolveActivity(packageManager)
 
@@ -205,13 +170,13 @@ class AddNewStoryActivity : AppCompatActivity() {
                 "com.example.tellstory",
                 it
             )
-            currentPhotoPath = it.absolutePath
+            selectedPhotoFilePath = it.absolutePath
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             launcherIntentCamera.launch(intent)
         }
     }
 
-    private fun startGalery() {
+    private fun openGallery() {
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
@@ -225,10 +190,7 @@ class AddNewStoryActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val selectedImg: Uri = result.data?.data as Uri
 
-            val myFile = uriToFile(selectedImg, this@AddNewStoryActivity)
-
-            getFile = myFile
-
+            selectedPhotoFile = uriToFile(selectedImg, this@AddNewStoryActivity)
             binding.imageViewHolder.setImageURI(selectedImg)
         }
     }
@@ -237,11 +199,11 @@ class AddNewStoryActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) {
         if (it.resultCode == RESULT_OK) {
-            val myFile = File(currentPhotoPath)
-            getFile = myFile
-
-            val result = BitmapFactory.decodeFile(getFile?.path)
-            val rotate = rotateBitmap(result, isBackCamera = true)
+            selectedPhotoFile = selectedPhotoFilePath?.let { selected ->
+                File(selected)
+            }
+            val selectedFile = BitmapFactory.decodeFile(selectedPhotoFile?.path)
+            val rotate = rotateBitmap(selectedFile, isBackCamera = true)
             binding.imageViewHolder.setImageBitmap(rotate)
         }
     }
@@ -260,18 +222,6 @@ class AddNewStoryActivity : AppCompatActivity() {
             }
         }
 
-    private fun showStatus(statusSuccess: Boolean) {
-        if (statusSuccess) {
-            finish()
-        } else {
-            Toast.makeText(this, "Failed Posted Stories", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun showRespones(response: String) {
-        Toast.makeText(this@AddNewStoryActivity, response.toString(), Toast.LENGTH_SHORT).show()
-    }
-
     private fun showLoading(isLoading: Boolean) {
         if (isLoading) {
             binding.loadingProgress.visibility = View.VISIBLE
@@ -280,6 +230,15 @@ class AddNewStoryActivity : AppCompatActivity() {
             binding.loadingProgress.visibility = View.GONE
             binding.btnPost.visibility = View.VISIBLE
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (selectedPhotoFile != null) binding.imageViewHolder.setImageURI(
+            Uri.fromFile(
+                selectedPhotoFile
+            )
+        )
     }
 
     private fun hideSystemUI() {
@@ -297,11 +256,17 @@ class AddNewStoryActivity : AppCompatActivity() {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            intent.putExtra(ADD_NEW_STORY_EXTRA_UPLOADED, isStoryUploaded)
+            intent.putExtra(IS_NEW_STORY_EXTRA_UPLOADED, isStoryUploaded)
             setResult(RESULT_OK, intent)
             finish()
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedCallback.handleOnBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 }

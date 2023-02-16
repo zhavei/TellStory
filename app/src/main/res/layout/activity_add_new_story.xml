@@ -64,6 +64,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <ImageButton
+            android:backgroundTint="@color/bright_orange"
             android:id="@+id/iv_pick_location"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -77,9 +78,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toTopOf="@+id/btn_post"
-            app:layout_constraintEnd_toEndOf="@+id/et_layout"
+            app:layout_constraintEnd_toStartOf="@+id/iv_close_location"
             app:layout_constraintStart_toEndOf="@+id/iv_pick_location"
             app:layout_constraintTop_toBottomOf="@+id/et_layout">
 
@@ -93,6 +95,18 @@
                 android:visibility="visible" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            android:visibility="gone"
+            android:id="@+id/iv_close_location"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:backgroundTint="@color/bright_orange"
+            android:focusable="true"
+            android:src="@drawable/ic_baseline_close_24"
+            app:layout_constraintBottom_toTopOf="@+id/btn_post"
+            app:layout_constraintEnd_toEndOf="@+id/et_layout"
+            app:layout_constraintTop_toBottomOf="@+id/et_layout" />
 
 
         <Button

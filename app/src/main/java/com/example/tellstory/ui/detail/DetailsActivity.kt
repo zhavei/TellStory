@@ -29,7 +29,7 @@ class DetailsActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        storyId = intent.getStringExtra(DETAILS_EXTRA)
+        storyId = intent.getStringExtra(DETAILS_EXTRA_WITH_ID)
         Log.d(TAG, "check user ID: $storyId")
 
         //region check status
@@ -78,7 +78,7 @@ class DetailsActivity : AppCompatActivity() {
 
 
     companion object {
-        const val DETAILS_EXTRA = "detail_activity"
+        const val DETAILS_EXTRA_WITH_ID = "detail_activity"
         private val TAG = DetailsActivity::class.simpleName
     }
 }

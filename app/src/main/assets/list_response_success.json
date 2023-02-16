@@ -1,0 +1,96 @@
+{
+  "error": false,
+  "message": "Stories fetched successfully",
+  "listStory": [
+    {
+      "id": "story-y-EeuygR2q-f_-tL",
+      "name": "test",
+      "description": "test",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676524892295_RTJ83EcW.jpg",
+      "createdAt": "2023-02-16T05:21:32.300Z",
+      "lat": -6.1940419,
+      "lon": 106.7989217
+    },
+    {
+      "id": "story-ENNnk3Ztt4h2g-VO",
+      "name": "test",
+      "description": "test",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676524296586_n_JuM6mg.jpg",
+      "createdAt": "2023-02-16T05:11:36.592Z",
+      "lat": -6.194269,
+      "lon": 106.79891
+    },
+    {
+      "id": "story-uv-piydJhQMzAIqu",
+      "name": "Pemuda Tampan",
+      "description": "test gallery lokasi",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676520190768_9kjJEnzv.jpg",
+      "createdAt": "2023-02-16T04:03:10.769Z",
+      "lat": -7.57857,
+      "lon": 110.82502
+    },
+    {
+      "id": "story-b6oJ3FQ9uJA56RAU",
+      "name": "xujak",
+      "description": "ffffffffffffff",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676517094010_w0F_dpm_.jpg",
+      "createdAt": "2023-02-16T03:11:34.011Z",
+      "lat": 37.4220936,
+      "lon": -122.083922
+    },
+    {
+      "id": "story-0JOZOfFcwLfwDRB6",
+      "name": "xujak",
+      "description": "dddcdcdcdcdcdc",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676517075132_okResecD.jpg",
+      "createdAt": "2023-02-16T03:11:15.134Z",
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "story-Uc7FBUmVZllOQ14_",
+      "name": "iman1231",
+      "description": "test",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676515981500_rgTCUNAc.jpg",
+      "createdAt": "2023-02-16T02:53:01.504Z",
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "story-2E0YTga2sFycG_ze",
+      "name": "bambang",
+      "description": "test",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676510059651_EUsQWxXu.jpg",
+      "createdAt": "2023-02-16T01:14:19.652Z",
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "story-cCpbW9wmktVeO666",
+      "name": "gugo",
+      "description": "aaaaaaaaaaaaaa",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676504471359_KkxHm90v.jpg",
+      "createdAt": "2023-02-15T23:41:11.359Z",
+      "lat": 37.4220936,
+      "lon": -122.083922
+    },
+    {
+      "id": "story-Erm8G8Q80jQj7Kq4",
+      "name": "gugo",
+      "description": "tes",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676504457011_lxFWMRFb.jpg",
+      "createdAt": "2023-02-15T23:40:57.013Z",
+      "lat": null,
+      "lon": null
+    },
+    {
+      "id": "story-j5TXuhf2XlB82MYT",
+      "name": "tiyar",
+      "description": "newtiyar",
+      "photoUrl": "https://story-api.dicoding.dev/images/stories/photos-1676499361048_wEH_mxYo.jpg",
+      "createdAt": "2023-02-15T22:16:01.050Z",
+      "lat": null,
+      "lon": null
+    }
+  ]
+}
