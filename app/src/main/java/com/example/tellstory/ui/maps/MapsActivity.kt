@@ -15,14 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.tellstory.R
 import com.example.tellstory.common.ViewModelFactories
+import com.example.tellstory.coredata.model.MainStory
 import com.example.tellstory.databinding.ActivityMapsBinding
 import com.example.tellstory.ui.viewmodel.MapsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.*
 import okio.IOException
 import java.util.*
 
@@ -50,9 +49,76 @@ class MapsActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+    private fun addMarkers(stories: List<MainStory>) {
+        // Add markers for each story that has a valid latitude and longitude.
+        stories.forEach { story ->
+            story.lat?.let { lat ->
+                story.lon?.let { lon ->
+                    val coordinate = LatLng(lat, lon)
+                    initialMarker.add(coordinate)
+                    mMap.addMarker(
+                        MarkerOptions().position(coordinate).title(story.name).snippet(story.description)
+                    )?.tag = story.id
+                    boundsBuilder.include(coordinate)
+                }
+            }
+        }
+
+        // Create a bounds object that includes all the markers, and animate the camera to show them all.
+        val bounds = boundsBuilder.build()
+        val padding = resources.displayMetrics.widthPixels / 4
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+    }
+
+    private fun addNewMarker(latLng: LatLng) {
+        // Remove the previously selected marker if it exists.
+        selectedMark?.let { prevSelectedMark ->
+            if (initialMarker.contains(prevSelectedMark.position)) {
+                prevSelectedMark.remove()
+            } else {
+                selectedMark?.position
+            }
+        }
+
+        // Create a new marker at the specified position with a green color and a title and snippet that describe the address.
+        val newMarker = mMap.addMarker(
+            MarkerOptions()
+                .position(latLng)
+                .title("Your Location")
+                .snippet(getAddress(latLng.latitude, latLng.longitude))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        )
+
+        // Show the info window for the new marker.
+        newMarker?.showInfoWindow()
+
+        // Set the new marker as the selected marker.
+        selectedMark = newMarker
+    }
 
     private fun getUserLocation() {
-        TODO("Not yet implemented")
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            mMap.isMyLocationEnabled = true
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    val latLng = LatLng(it.latitude, it.longitude)
+                    if (isPickLocation) {
+                        addNewMarker(latLng)
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
+                    }
+                } ?: run {
+                    Toast.makeText(this, "Last location is not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
 
@@ -109,7 +175,7 @@ class MapsActivity : AppCompatActivity() {
     private fun setMapStyle() {
         try {
             val success =
-                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style_2))
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
             if (!success) {
                 Toast.makeText(this, "Failed parse map style", Toast.LENGTH_SHORT).show()
             }
