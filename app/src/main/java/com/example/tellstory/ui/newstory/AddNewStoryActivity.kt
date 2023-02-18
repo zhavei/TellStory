@@ -144,7 +144,7 @@ class AddNewStoryActivity : AppCompatActivity() {
     }
 
     private fun postNewStory() {
-        binding.apply {
+        /*with(binding) {
             if (etDescription.text.isNullOrEmpty() || selectedPhotoFile == null) {
                 etDescription.error = getString(R.string.empty_desc)
                 return
@@ -156,7 +156,28 @@ class AddNewStoryActivity : AppCompatActivity() {
                 lon = selectedLocationLatLng?.longitude?.toFloat(),
                 desc = etDescription.text?.trim().toString()
             )
+        }*/
+
+        //punya dia
+        with(binding) {
+            if (!etDescription.text.isNullOrEmpty() && selectedPhotoFile != null) {
+                val reducedImage = reduceFileImage(selectedPhotoFile!!)
+                addNewStoryViewModel.postNewStory(
+                    file = reducedImage,
+                    lat = selectedLocationLatLng?.latitude?.toFloat(),
+                    lon = selectedLocationLatLng?.longitude?.toFloat(),
+                    desc = etDescription.text?.trim().toString()
+
+                    /*description = etDescription.text?.trim().toString(),
+                    photo = reducedImage,
+                    lat = selectedLocationCoordinate?.latitude?.toFloat(),
+                    lon = selectedLocationCoordinate?.longitude?.toFloat(),*/
+                )
+            } else {
+                etDescription.error = "Description or image should not empty"
+            }
         }
+
     }
 
 

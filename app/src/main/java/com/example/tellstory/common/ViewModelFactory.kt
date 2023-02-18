@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.tellstory.ui.viewmodel.*
 
+/*
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory (
     private val userDataPreferencesOld: UserDataPreferencesOld
@@ -29,4 +30,4 @@ class ViewModelFactory (
         }
     }
 
-}
+}*/
