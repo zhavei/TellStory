@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.welcomeUser.observe(this) {
             Log.d(TAG, "log welcome : $it")
             Toast.makeText(this, "Welcome $it", Toast.LENGTH_SHORT).show()
+            binding.tvAppName.text = it
         }
 
 
