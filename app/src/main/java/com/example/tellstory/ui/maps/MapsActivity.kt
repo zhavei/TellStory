@@ -1,6 +1,7 @@
 package com.example.tellstory.ui.maps
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.location.Geocoder
@@ -13,19 +14,24 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.example.tellstory.R
 import com.example.tellstory.common.ViewModelFactories
 import com.example.tellstory.coredata.model.MainStory
 import com.example.tellstory.databinding.ActivityMapsBinding
+import com.example.tellstory.ui.detail.DetailsActivity
 import com.example.tellstory.ui.viewmodel.MapsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import okio.IOException
 import java.util.*
 
-class MapsActivity : AppCompatActivity() {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val binding by lazy {
         ActivityMapsBinding.inflate(layoutInflater)
@@ -47,7 +53,85 @@ class MapsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        isPickLocation = intent.getBooleanExtra(MAPS_PICKED_LATLON, false)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map_fragment) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
     }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Enable compass and zoom controls on the map.
+        mMap.uiSettings.run {
+            isCompassEnabled = true
+            isZoomControlsEnabled = true
+        }
+
+        // Reset the selected story ID and hide the detail and location pick buttons when the map is clicked.
+        mMap.setOnMapClickListener {
+            selectedStoryId = null
+            binding.btnViewDetail.isVisible = false
+            binding.btnPickLocation.isVisible = false
+        }
+
+        // Show the selected story's info window and update the UI when a marker is clicked.
+        mMap.setOnMarkerClickListener { marker ->
+            marker.showInfoWindow()
+            selectedStoryId = marker.tag?.toString()
+            prevSelectedMark = selectedMark
+            selectedMark = marker
+            if (isPickLocation) {
+                binding.btnPickLocation.isVisible = true
+            }
+            binding.btnViewDetail.isVisible = true
+            if (selectedStoryId.isNullOrEmpty() || selectedStoryId == "null") {
+                binding.btnViewDetail.visibility = View.INVISIBLE
+            }
+            return@setOnMarkerClickListener true
+        }
+
+        // If the user is picking a location, add a new marker when the map is long clicked.
+        if (isPickLocation) {
+            binding.btnPickLocation.isVisible = true
+            mMap.setOnMapLongClickListener { addNewMarker(it) }
+        }
+
+        // Set the map style, and observe the loading state and snackbar text from the view model.
+        setMapStyle()
+        addNewStoryViewModel.loading.observe(this, ::showLoading)
+
+        // Load the stories and add markers for them.
+        addNewStoryViewModel.mapsStory.observe(this) { stories ->
+            if (stories.isNotEmpty()) addMarkers(
+                stories
+            )
+        }
+        addNewStoryViewModel.getMapsStories()
+
+        // Show the story details when the "View Detail" button is clicked, and let the user pick a location when the "Pick Location" button is clicked.
+        binding.btnViewDetail.setOnClickListener {
+            startActivity(
+                Intent(
+                    this,
+                    DetailsActivity::class.java
+                ).apply { putExtra(DetailsActivity.DETAILS_EXTRA_WITH_ID, selectedStoryId) })
+        }
+        binding.btnPickLocation.setOnClickListener { onBackPressedCallback.handleOnBackPressed() }
+
+        // Get the user's location.
+        getUserLocation()
+    }
+
 
     private fun addMarkers(stories: List<MainStory>) {
         // Add markers for each story that has a valid latitude and longitude.
