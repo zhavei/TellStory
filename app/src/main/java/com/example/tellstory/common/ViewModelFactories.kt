@@ -38,6 +38,7 @@ class ViewModelFactories (
             modelClass.isAssignableFrom(DetailsViewModel::class.java) -> DetailsViewModel(storyRepository) as T
             modelClass.isAssignableFrom(SplashViewModel::class.java) -> SplashViewModel(storyRepository) as T
             modelClass.isAssignableFrom(MapsViewModel::class.java) -> MapsViewModel(storyRepository) as T
+            modelClass.isAssignableFrom(UserProfileViewModel::class.java) -> UserProfileViewModel(storyRepository) as T
             else -> throw IllegalArgumentException("Unrecognized ViewModel class: " + modelClass.name)
         }
     }

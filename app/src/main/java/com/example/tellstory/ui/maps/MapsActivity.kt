@@ -41,20 +41,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         ViewModelFactories.getInstance(application)
     }
 
-    private lateinit var mMap: GoogleMap
-    private var selectedStoryId: String? = null
-    private var selectedMark: Marker? = null
-    private var prevSelectedMark: Marker? = null
+    private lateinit var googleMap: GoogleMap
     private val boundsBuilder = LatLngBounds.Builder()
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var isPickLocation: Boolean = false
-    private val initialMarker: MutableList<LatLng> = mutableListOf()
+    private lateinit var locationProviderClient: FusedLocationProviderClient
+    private var selectedMarker: Marker? = null
+    private var previousSelectedMarker: Marker? = null
+    private val initialMarkers: MutableList<LatLng> = mutableListOf()
+    private var selectedStoryId: String? = null
+    private var inPickLocationMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        isPickLocation = intent.getBooleanExtra(MAPS_PICKED_LATLON, false)
+        inPickLocationMode = intent.getBooleanExtra(MAPS_PICKED_LATLON, false)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -68,29 +68,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        this.googleMap = googleMap
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Enable compass and zoom controls on the map.
-        mMap.uiSettings.run {
+        this.googleMap.uiSettings.run {
             isCompassEnabled = true
             isZoomControlsEnabled = true
         }
 
         // Reset the selected story ID and hide the detail and location pick buttons when the map is clicked.
-        mMap.setOnMapClickListener {
+        this.googleMap.setOnMapClickListener {
             selectedStoryId = null
             binding.btnViewDetail.isVisible = false
             binding.btnPickLocation.isVisible = false
         }
 
         // Show the selected story's info window and update the UI when a marker is clicked.
-        mMap.setOnMarkerClickListener { marker ->
+        this.googleMap.setOnMarkerClickListener { marker ->
             marker.showInfoWindow()
             selectedStoryId = marker.tag?.toString()
-            prevSelectedMark = selectedMark
-            selectedMark = marker
-            if (isPickLocation) {
+            previousSelectedMarker = selectedMarker
+            selectedMarker = marker
+            if (inPickLocationMode) {
                 binding.btnPickLocation.isVisible = true
             }
             binding.btnViewDetail.isVisible = true
@@ -101,9 +101,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         // If the user is picking a location, add a new marker when the map is long clicked.
-        if (isPickLocation) {
+        if (inPickLocationMode) {
             binding.btnPickLocation.isVisible = true
-            mMap.setOnMapLongClickListener { addNewMarker(it) }
+            this.googleMap.setOnMapLongClickListener { addNewMarker(it) }
         }
 
         // Set the map style, and observe the loading state and snackbar text from the view model.
@@ -139,9 +139,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             story.lat?.let { lat ->
                 story.lon?.let { lon ->
                     val coordinate = LatLng(lat, lon)
-                    initialMarker.add(coordinate)
-                    mMap.addMarker(
-                        MarkerOptions().position(coordinate).title(story.name).snippet(story.description)
+                    initialMarkers.add(coordinate)
+                    googleMap.addMarker(
+                        MarkerOptions().position(coordinate).title(story.name)
+                            .snippet(story.description)
                     )?.tag = story.id
                     boundsBuilder.include(coordinate)
                 }
@@ -151,45 +152,45 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // Create a bounds object that includes all the markers, and animate the camera to show them all.
         val bounds = boundsBuilder.build()
         val padding = resources.displayMetrics.widthPixels / 4
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
     }
 
     private fun addNewMarker(latLng: LatLng) {
         // Remove the previously selected marker if it exists.
-        selectedMark?.let { prevSelectedMark ->
-            if (initialMarker.contains(prevSelectedMark.position)) {
+        selectedMarker?.let { prevSelectedMark ->
+            if (initialMarkers.contains(prevSelectedMark.position)) {
                 prevSelectedMark.remove()
             } else {
-                selectedMark?.position
+                selectedMarker?.remove()
             }
         }
 
         // Create a new marker at the specified position with a green color and a title and snippet that describe the address.
-        val newMarker = mMap.addMarker(
+        val newMarker = googleMap.addMarker(
             MarkerOptions()
                 .position(latLng)
                 .title("Your Location")
                 .snippet(getAddress(latLng.latitude, latLng.longitude))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
         )
 
         // Show the info window for the new marker.
         newMarker?.showInfoWindow()
 
         // Set the new marker as the selected marker.
-        selectedMark = newMarker
+        selectedMarker = newMarker
     }
 
     private fun getUserLocation() {
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
             checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            mMap.isMyLocationEnabled = true
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            googleMap.isMyLocationEnabled = true
+            locationProviderClient.lastLocation.addOnSuccessListener { location ->
                 location?.let {
                     val latLng = LatLng(it.latitude, it.longitude)
-                    if (isPickLocation) {
+                    if (inPickLocationMode) {
                         addNewMarker(latLng)
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f))
                     }
                 } ?: run {
                     Toast.makeText(this, "Last location is not found", Toast.LENGTH_SHORT).show()
@@ -259,7 +260,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setMapStyle() {
         try {
             val success =
-                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
             if (!success) {
                 Toast.makeText(this, "Failed parse map style", Toast.LENGTH_SHORT).show()
             }
@@ -274,13 +275,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Bundle().apply {
                     putParcelable(
                         MAPS_LOCATION,
-                        selectedMark?.position
+                        selectedMarker?.position
                     )
                     putString(
                         MAPS_ADDRESS,
                         getAddress(
-                            selectedMark?.position?.latitude,
-                            selectedMark?.position?.longitude
+                            selectedMarker?.position?.latitude,
+                            selectedMarker?.position?.longitude
                         )
                     )
                 }

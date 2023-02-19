@@ -1,17 +1,20 @@
 package com.example.tellstory.ui.profile
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.tellstory.R
+import com.example.tellstory.common.ViewModelFactories
 import com.example.tellstory.databinding.ActivityUserProfileBinding
+import com.example.tellstory.ui.auth.LoginActivity
+import com.example.tellstory.ui.main.MainActivity
+import com.example.tellstory.ui.viewmodel.UserProfileViewModel
 
-private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
 class UserProfileActivity : AppCompatActivity() {
 
 
@@ -19,16 +22,36 @@ class UserProfileActivity : AppCompatActivity() {
         ActivityUserProfileBinding.inflate(layoutInflater)
     }
 
+    private val userProfileViewModel: UserProfileViewModel by viewModels {
+        ViewModelFactories.getInstance(application)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val getData = intent.getStringExtra(USER_PROFILE_EXTRA)
-        if (getData != null && getData.isNotEmpty()) {
-            binding.tvAppName.text = "hello $getData"
-        } else {
-            binding.tvAppName.text = getString(R.string.hello_user)
+        userProfileViewModel.loading.observe(this) {
+            showLoading(it)
+        }
+
+        //region observe logout status
+        binding.tvLogout2.setOnClickListener {
+            userProfileViewModel.signOut()
+        }
+
+        userProfileViewModel.signOut.observe(this) {
+            startActivity(Intent(this@UserProfileActivity, LoginActivity::class.java))
+            finishAffinity()
+        }
+        //endregion
+
+        //welcome user
+        userProfileViewModel.getTheName()
+        userProfileViewModel.welcomeUser.observe(this) {
+            Log.d("userProfile", "log welcome : $it")
+            binding.tvAppName.text = it
+            binding.tvExit.text = it
         }
 
         setupLanguage()
@@ -46,6 +69,14 @@ class UserProfileActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    private fun showLoading(show: Boolean) {
+        if (show) {
+            binding.progress.visibility = View.VISIBLE
+        } else {
+            binding.progress.visibility = View.GONE
+        }
     }
 
     companion object {

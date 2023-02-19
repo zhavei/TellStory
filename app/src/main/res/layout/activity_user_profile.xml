@@ -94,11 +94,56 @@
         app:layout_constraintStart_toEndOf="@id/tv_languange_name"
         app:layout_constraintTop_toTopOf="@+id/iv_setting" />
 
+    <ImageView
+        android:id="@+id/iv_setting2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/ic_baseline_exit_to_app_24"
+        app:layout_constraintStart_toStartOf="@+id/tv_setting_name"
+        app:layout_constraintTop_toBottomOf="@+id/iv_setting" />
+
+    <TextView
+        android:id="@+id/tv_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:text="@string/exit"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_setting2"
+        app:layout_constraintStart_toEndOf="@id/iv_setting2"
+        app:layout_constraintTop_toTopOf="@+id/iv_setting2" />
+
+    <TextView
+        android:id="@+id/tv_logout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="@string/logout"
+        android:textAlignment="viewEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_setting2"
+        app:layout_constraintEnd_toEndOf="@+id/view2"
+        app:layout_constraintStart_toEndOf="@id/tv_exit"
+        app:layout_constraintTop_toTopOf="@+id/iv_setting2" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="200dp" />
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_app_name"
+        app:layout_constraintEnd_toEndOf="@+id/tv_app_name"
+        app:layout_constraintStart_toStartOf="@+id/tv_app_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

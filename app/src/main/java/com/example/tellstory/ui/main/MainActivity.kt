@@ -23,6 +23,7 @@ import com.example.tellstory.coredata.model.MainStory
 import com.example.tellstory.databinding.ActivityMainBinding
 import com.example.tellstory.ui.auth.LoginActivity
 import com.example.tellstory.ui.detail.DetailsActivity
+import com.example.tellstory.ui.maps.MapsActivity
 import com.example.tellstory.ui.newstory.AddNewStoryActivity
 import com.example.tellstory.ui.profile.UserProfileActivity
 import com.example.tellstory.ui.viewmodel.MainViewModel
@@ -53,14 +54,9 @@ class MainActivity : AppCompatActivity() {
             showLoading(it)
         }
 
-        //region observe logout status
-        mainViewModel.signOut.observe(this) {
-            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-            finishAffinity()
-        }
-
-        binding.cvExit.setOnClickListener {
-            mainViewModel.signOut()
+        //region maps activity
+        binding.cvMaps.setOnClickListener {
+            startActivity(Intent(this@MainActivity, MapsActivity::class.java))
         }
         //endregion
 
@@ -78,7 +74,6 @@ class MainActivity : AppCompatActivity() {
 
         //to user profile
         binding.apply {
-            val getData = intent.getStringExtra(MAIN_EXTRA)
             cardViewMain.setOnClickListener {
                 val optionsCompat: ActivityOptionsCompat =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -87,9 +82,7 @@ class MainActivity : AppCompatActivity() {
                         Pair(tvAppName, getString(R.string.user_name))
                     )
                 startActivity(
-                    Intent(this@MainActivity, UserProfileActivity::class.java).also {
-                        it.putExtra(UserProfileActivity.USER_PROFILE_EXTRA, getData)
-                    },
+                    Intent(this@MainActivity, UserProfileActivity::class.java),
                     optionsCompat.toBundle(),
                 )
             }
@@ -110,7 +103,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        //insyaalloh g crash
+
+
         binding.fabMain.setOnClickListener {
             newStoryLauncher.launch(Intent(this@MainActivity, AddNewStoryActivity::class.java))
             Log.d(TAG, "testing Fab")

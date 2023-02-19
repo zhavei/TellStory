@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.tellstory.R
 import com.example.tellstory.common.ViewModelFactories
 import com.example.tellstory.databinding.ActivityDetailsBinding
 import com.example.tellstory.ui.viewmodel.DetailsViewModel
@@ -50,6 +51,9 @@ class DetailsActivity : AppCompatActivity() {
             binding.apply {
                 tvNameDetail.text = setData.name
                 tvDescDetail.text = setData.description
+                val date = getString(R.string.create_at, setData.createdAt.split("T").get(0) ?: "")
+                tvCreateTime.text = date
+
                 Glide.with(this@DetailsActivity).load(setData?.photoUrl).centerCrop()
                     .into(ivDetails)
             }

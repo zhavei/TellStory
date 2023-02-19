@@ -75,26 +75,33 @@
             app:layout_constraintStart_toStartOf="@+id/et_layout"
             app:layout_constraintTop_toBottomOf="@id/et_layout" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <TextView
+            android:id="@+id/tv_please"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Please Pick Your Location"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_pick_location"
+            app:layout_constraintStart_toEndOf="@+id/iv_pick_location"
+            app:layout_constraintTop_toTopOf="@+id/iv_pick_location" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_input_location"
             android:layout_width="0dp"
             android:layout_height="50dp"
+            android:focusable="false"
+            android:hint="@string/clik_icon_to_pick_your_location"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:maxLines="1"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/btn_post"
             app:layout_constraintEnd_toStartOf="@+id/iv_close_location"
             app:layout_constraintStart_toEndOf="@+id/iv_pick_location"
             app:layout_constraintTop_toBottomOf="@+id/et_layout">
 
-
-            <EditText
-                android:id="@+id/et_pick_location"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:focusable="true"
-                android:hint="Pick Your Location"
-                android:visibility="visible" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.textfield.TextInputEditText>
 
         <ImageButton
             android:visibility="gone"

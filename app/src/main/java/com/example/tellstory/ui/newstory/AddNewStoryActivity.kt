@@ -119,21 +119,32 @@ class AddNewStoryActivity : AppCompatActivity() {
             binding.ivPickLocation.setOnClickListener {
                 shouldProvideLocation = !shouldProvideLocation
                 if (shouldProvideLocation) {
-                    val intent = Intent(this@AddNewStoryActivity, MapsActivity::class.java)
-                    intent.putExtra(MapsActivity.MAPS_PICKED_LATLON, true)
-                    locationLauncher.launch(intent)
-                    binding.ivCloseLocation.visibility = View.VISIBLE
+                    binding.apply {
+                        etInputLocation.visibility = View.VISIBLE
+                        tvPlease.visibility = View.GONE
+                        ivCloseLocation.visibility = View.VISIBLE
+                    }
                 } else {
                     selectedLocationLatLng = null
-                    with(binding) {
-                        etPickLocation.text = null
+                    binding.apply {
+                        etInputLocation.text = null
+                        etInputLocation.visibility = View.GONE
+                        tvPlease.visibility = View.VISIBLE
+                        ivCloseLocation.visibility = View.GONE
                     }
                 }
             }
+
+            binding.etInputLocation.setOnClickListener {
+                val intent = Intent(this@AddNewStoryActivity, MapsActivity::class.java)
+                intent.putExtra(MapsActivity.MAPS_PICKED_LATLON, true)
+                locationLauncher.launch(intent)
+            }
+
             binding.ivCloseLocation.setOnClickListener {
                 selectedLocationLatLng = null
                 with(binding) {
-                    etPickLocation.text = null
+                    etInputLocation.text = null
                 }
             }
 
@@ -144,7 +155,7 @@ class AddNewStoryActivity : AppCompatActivity() {
     }
 
     private fun postNewStory() {
-        /*with(binding) {
+        with(binding) {
             if (etDescription.text.isNullOrEmpty() || selectedPhotoFile == null) {
                 etDescription.error = getString(R.string.empty_desc)
                 return
@@ -156,28 +167,7 @@ class AddNewStoryActivity : AppCompatActivity() {
                 lon = selectedLocationLatLng?.longitude?.toFloat(),
                 desc = etDescription.text?.trim().toString()
             )
-        }*/
-
-        //punya dia
-        with(binding) {
-            if (!etDescription.text.isNullOrEmpty() && selectedPhotoFile != null) {
-                val reducedImage = reduceFileImage(selectedPhotoFile!!)
-                addNewStoryViewModel.postNewStory(
-                    file = reducedImage,
-                    lat = selectedLocationLatLng?.latitude?.toFloat(),
-                    lon = selectedLocationLatLng?.longitude?.toFloat(),
-                    desc = etDescription.text?.trim().toString()
-
-                    /*description = etDescription.text?.trim().toString(),
-                    photo = reducedImage,
-                    lat = selectedLocationCoordinate?.latitude?.toFloat(),
-                    lon = selectedLocationCoordinate?.longitude?.toFloat(),*/
-                )
-            } else {
-                etDescription.error = "Description or image should not empty"
-            }
         }
-
     }
 
 
@@ -238,7 +228,7 @@ class AddNewStoryActivity : AppCompatActivity() {
                     it.data?.extras?.getString(MapsActivity.MAPS_ADDRESS)
                 if (locationDataMarker != null) {
                     selectedLocationLatLng = locationDataMarker
-                    binding.etPickLocation.setText(locationAddress)
+                    binding.etInputLocation.setText(locationAddress)
                 }
             }
         }

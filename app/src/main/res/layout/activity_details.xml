@@ -66,6 +66,15 @@
                 android:background="@android:color/darker_gray" />
 
             <TextView
+                android:id="@+id/tv_create_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:paddingEnd="22dp"
+                android:text="@string/create_at"
+                android:textStyle="italic" />
+
+            <TextView
                 android:id="@+id/tv_desc_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

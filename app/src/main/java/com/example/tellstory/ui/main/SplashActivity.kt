@@ -1,9 +1,12 @@
 package com.example.tellstory.ui.main
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.WindowInsets
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tellstory.common.ViewModelFactories
@@ -25,6 +28,8 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        hideSystemUI()
+
         Handler().postDelayed({
             // This method will be executed once the timer is over
             observeLogin()
@@ -35,13 +40,27 @@ class SplashActivity : AppCompatActivity() {
 
     private fun observeLogin() {
         viewModel.isLogin.observe(this) { isUserAlreadyLogin ->
-            val activityClass = if (isUserAlreadyLogin) MainActivity::class.java else LoginActivity::class.java
+            val activityClass =
+                if (isUserAlreadyLogin) MainActivity::class.java else LoginActivity::class.java
             startActivity(Intent(this, activityClass))
             finish()
             Log.d(TAG, "check the name:  $isUserAlreadyLogin")
         }
 
         viewModel.isUserLogin()
+    }
+
+    private fun hideSystemUI() {
+        @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
+        supportActionBar?.hide()
     }
 
     companion object {

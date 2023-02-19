@@ -21,9 +21,6 @@ class MainViewModel(private val tellStoryRepository: TellStoryRepository) : View
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> get() = _loading
 
-    private val _signOut = MutableLiveData<Boolean>()
-    val signOut: LiveData<Boolean> get() = _signOut
-
     private val _welcomeUser = MutableLiveData<String>()
     val welcomeUser: LiveData<String> = _welcomeUser
 
@@ -35,26 +32,6 @@ class MainViewModel(private val tellStoryRepository: TellStoryRepository) : View
             Log.d("Main viewModel", user.toString())
         }
     }
-
-    fun signOut() {
-        _loading.value = true
-
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val result = tellStoryRepository.logout()
-                if (result) {
-                    _loading.value = false
-                    _signOut.value = true
-                } else {
-                    _loading.value = false
-                }
-            } catch (e: Exception) {
-                _loading.value = false
-                Log.e(TAG, "Error while signing out: ${e.message}")
-            }
-        }
-    }
-
 
     companion object {
         private const val TAG = "MainViewModel"

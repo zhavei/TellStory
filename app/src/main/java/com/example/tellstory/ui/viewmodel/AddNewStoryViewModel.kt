@@ -34,7 +34,7 @@ class AddNewStoryViewModel(
             desc, lat, lon
         )
         val imageType = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-        val image = MultipartBody.Part.createFormData("image", file.name, imageType)
+        val image = MultipartBody.Part.createFormData("photo", file.name, imageType)
 
         viewModelScope.launch {
             runCatching {
