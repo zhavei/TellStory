@@ -1,14 +1,14 @@
 package com.example.storyapp.data
 
 import androidx.paging.PagingData
-import com.example.storyapp.data.model.Story
+import com.example.tellstory.coredata.model.MainStory
 
 object DataDummy {
-    fun generateDummyStories(): List<Story> {
-        val stories: MutableList<Story> = arrayListOf()
+    fun generateDummyStories(): List<MainStory> {
+        val stories: MutableList<MainStory> = arrayListOf()
         repeat(10) {
             stories.add(
-                Story(
+                MainStory(
                     photoUrl = "photo-$it",
                     createdAt = "createdAt-$it",
                     name = "name-$it",
@@ -21,6 +21,4 @@ object DataDummy {
         }
         return stories
     }
-
-    fun generateDummyPagingStories(): PagingData<Story> = PagingData.from(generateDummyStories())
 }

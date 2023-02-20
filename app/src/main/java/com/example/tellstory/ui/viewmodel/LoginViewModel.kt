@@ -49,7 +49,6 @@ class LoginViewModel(private val tellStoryRepository: TellStoryRepository) : Vie
                 setLoading(false)
                 setAuthenticated(false)
                 setSnackbarText("Either Email or Password is Invalid")
-                Log.e(TAG, "login failed: ${e.message}")
             }
         }
     }

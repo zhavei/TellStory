@@ -19,16 +19,16 @@ class StoryAdapter : PagingDataAdapter<MainStory, StoryAdapter.StoryViewHolders>
         this.onItemClickCallback = onItemClickCallback
     }
 
-    private object DIFFUTILS : DiffUtil.ItemCallback<MainStory>() {
-        // DiffUtil uses this test to help discover if an item was added, removed, or moved.
-        override fun areItemsTheSame(oldItem: MainStory, newItem: MainStory): Boolean {
-            return oldItem.id == newItem.id
-        }
+     object DIFFUTILS : DiffUtil.ItemCallback<MainStory>() {
+         // DiffUtil uses this test to help discover if an item was added, removed, or moved.
+         override fun areItemsTheSame(oldItem: MainStory, newItem: MainStory): Boolean {
+             return oldItem.id == newItem.id
+         }
 
-        override fun areContentsTheSame(oldItem: MainStory, newItem: MainStory): Boolean {
-            return oldItem == newItem
-        }
-    }
+         override fun areContentsTheSame(oldItem: MainStory, newItem: MainStory): Boolean {
+             return oldItem == newItem
+         }
+     }
 
     inner class StoryViewHolders(var binding: ItemListStoriesBinding) :
         RecyclerView.ViewHolder(binding.root)

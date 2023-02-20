@@ -39,7 +39,6 @@ class RegisterViewModel (
                     Log.d(TAG, "newRegister: ${registerResult.toString()}")
                 }
             } catch (e: Throwable) {
-                Log.e(TAG, "check register: ${e.message}")
                 _showError.postValue(true)
             } finally {
                 _loading.postValue(false)

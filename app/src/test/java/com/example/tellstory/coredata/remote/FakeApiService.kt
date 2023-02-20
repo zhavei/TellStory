@@ -1,16 +1,13 @@
 package com.example.storyapp.data
 
-import com.example.storyapp.data.model.*
-import com.example.storyapp.data.model.request.LoginRequest
-import com.example.storyapp.data.model.request.RegisterRequest
-import com.example.storyapp.data.services.remote.ApiServices
+import com.example.tellstory.coredata.model.MainStory
+import com.example.tellstory.coredata.remote.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 
-class FakeApiService : ApiServices {
-
-    override suspend fun login(loginRequest: LoginRequest): Response<LoginResponse> {
+class FakeApiService : ApiService {
+    override suspend fun loginService(loginRequestBody: LoginRequestBody): Response<LoginResponse> {
         return Response.success(
             LoginResponse(
                 error = false,
@@ -24,54 +21,40 @@ class FakeApiService : ApiServices {
         )
     }
 
-    override suspend fun register(registerRequest: RegisterRequest): Response<BaseResponse> {
+    override suspend fun registerService(registerRequestBody: RegisterRequestBody): Response<MainResponse> {
         return Response.success(
-            BaseResponse(
+            MainResponse(
                 error = false,
                 message = "success",
             )
         )
     }
 
-    override suspend fun addStoryAsGuest(
-        description: RequestBody,
-        latitude: Float?,
-        longitude: Float?,
+    override suspend fun addNewStoryService(
+        token: String,
+        desc: RequestBody,
+        lat: Float?,
+        lon: Float?,
         file: MultipartBody.Part
-    ): Response<BaseResponse> {
+    ): Response<MainResponse> {
         return Response.success(
-            BaseResponse(
+            MainResponse(
                 error = false,
                 message = "success",
             )
         )
     }
 
-    override suspend fun addStory(
-        authToken: String,
-        description: RequestBody,
-        latitude: Float?,
-        longitude: Float?,
-        file: MultipartBody.Part
-    ): Response<BaseResponse> {
-        return Response.success(
-            BaseResponse(
-                error = false,
-                message = "success",
-            )
-        )
-    }
-
-    override suspend fun getAllStories(
-        authToken: String,
+    override suspend fun listStories(
+        token: String,
         page: Int,
         size: Int,
         location: Int
-    ): Response<StoryResponses> {
-        val stories: MutableList<Story> = arrayListOf()
+    ): Response<GetAllStoriesResponse> {
+        val stories: MutableList<MainStory> = arrayListOf()
         repeat(10) {
             stories.add(
-                Story(
+                MainStory(
                     photoUrl = "photo-$it",
                     createdAt = "createdAt-$it",
                     name = "name-$it",
@@ -83,17 +66,17 @@ class FakeApiService : ApiServices {
             )
         }
 
-        val response = StoryResponses(error = false, message = null, stories)
+        val response = GetAllStoriesResponse(error = false, message = null, stories)
 
         return Response.success(response)
     }
 
-    override suspend fun getStoryDetail(authToken: String, id: String): Response<StoryResponse> {
+    override suspend fun detailStory(token: String, userId: String): Response<DetailsStory> {
         return Response.success(
-            StoryResponse(
+            DetailsStory(
                 error = false,
                 message = "",
-                story = Story(
+                story = MainStory(
                     photoUrl = "photo",
                     createdAt = "createdAt",
                     name = "name",
