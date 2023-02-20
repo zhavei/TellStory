@@ -63,11 +63,15 @@ class MainViewModelTest {
         assertNotNull(differ.snapshot())
         //get size
         assertEquals(dummyStories.size, differ.snapshot().size)
-        //get first index id
+        //get fist index
+        assertEquals(dummyStories[0], differ.snapshot()[0])
+        //get first indexes id
+        assertEquals(dummyStories[0].id, differ.snapshot()[0]?.id)
+        //get first id
         assertEquals(dummyStories.first().id, differ.snapshot().first()?.id)
-        //am add this get specific index
+        //get specific index
         assertEquals(dummyStories.get(7), differ.snapshot().get(7))
-        // get last index
+        //get last index
         assertEquals(dummyStories.lastIndex, differ.snapshot().lastIndex)
     }
 
