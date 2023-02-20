@@ -51,7 +51,7 @@ class DetailsActivity : AppCompatActivity() {
             binding.apply {
                 tvNameDetail.text = setData.name
                 tvDescDetail.text = setData.description
-                val date = getString(R.string.create_at, setData.createdAt.split("T").get(0) ?: "")
+                val date = getString(R.string.create_at, setData.createdAt.split("T").get(0))
                 tvCreateTime.text = date
 
                 Glide.with(this@DetailsActivity).load(setData?.photoUrl).centerCrop()

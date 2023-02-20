@@ -44,7 +44,7 @@ class SplashActivity : AppCompatActivity() {
                 if (isUserAlreadyLogin) MainActivity::class.java else LoginActivity::class.java
             startActivity(Intent(this, activityClass))
             finish()
-            Log.d(TAG, "check the name:  $isUserAlreadyLogin")
+            Log.d(TAG, "check the name splash:  $isUserAlreadyLogin")
         }
 
         viewModel.isUserLogin()

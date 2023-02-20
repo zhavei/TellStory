@@ -28,13 +28,13 @@
     <string name="language">Bahasa</string>
     <string name="change">ganti</string>
     <string name="signup">Daftar</string>
-    <string name="retry">retry</string>
-    <string name="email_is_used">email is already Used</string>
-    <string name="view_location_detail">view location detail</string>
-    <string name="pick_your_location">pick your location</string>
-    <string name="clik_icon_to_pick_your_location">Pick Your Location</string>
-    <string name="logout">logout</string>
-    <string name="exit">exit</string>
+    <string name="retry">coba lagi</string>
+    <string name="email_is_used">surel telah di gunakan</string>
+    <string name="view_location_detail">Lihat Detil Lokasi</string>
+    <string name="pick_your_location">Pilih Lokasi Anda</string>
+    <string name="clik_icon_to_pick_your_location">Pilih Lokasi</string>
+    <string name="logout">keluar sesi</string>
+    <string name="exit">keluar</string>
     <string name="create_at">di upload pada %1$s</string>
 
 </resources>
